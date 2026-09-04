@@ -3,67 +3,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAIR Model Study Tool — Build the Decomposition Tree from Memory</title>
-  <meta name="description" content="An interactive study tool for the FAIR risk taxonomy: study the decomposition tree, rebuild it from memory, assign the right unit to every factor, and match all 22 definitions. A training exercise by RootCaws LLC." />
+  <title>FAIR Taxonomy Drill — walk the tree, rebuild it, match every definition</title>
+  <meta name="description" content="A study drill for the FAIR risk taxonomy: walk the factor tree with the units on, rebuild it from a shuffled pool with them off, and match all twenty-two definitions to their names. Load a source-backed loss benchmark to see how little of the tree published data ever fills. A RootCaws LLC risk lab tool." />
   <meta name="author" content="RootCaws LLC" />
   <meta name="robots" content="noindex, follow" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="FAIR Model Study Tool" />
-  <meta property="og:description" content="Build the FAIR decomposition tree from memory. Place components, assign units, match definitions." />
-  <meta property="og:site_name" content="RootCaws LLC" />
+  <meta property="og:title" content="FAIR Taxonomy Drill" />
+  <meta property="og:description" content="Walk the FAIR factor tree, rebuild it from memory, match every definition." />
+  <meta property="og:site_name" content="RootCaws LLC · Risk Lab" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600;1,9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* Palette lifted from the RootCaws design system */
     :root{
       color-scheme:light;
-      --paper:#f7ebed;
-      --paper-2:#f0dee0;
-      --panel:#ffffff;
-      --ink:#3a3336;
-      --ink-2:#4d4548;
-      --muted:#7a7073;
-      --line:#d8c9cc;
-      --soft-line:rgba(58,51,54,0.08);
-      --accent:#8d5860;
-      --accent-2:#c7848d;
-      --accent-soft:#f4dcdf;
-      --chip:rgba(199,132,141,0.14);
-      --amber:#9a6a24;
-      --amber-soft:#f7e9d4;
-      --sage:#4c7359;
-      --sage-soft:#e2eee6;
-      --plum:#6f5b86;
-      --plum-soft:#ece7f2;
-      --shadow:0 14px 36px rgba(58,51,54,0.13);
+      --paper:#f7ebed;--paper-2:#f0dee0;--panel:#ffffff;
+      --ink:#3a3336;--ink-2:#4d4548;--muted:#7a7073;
+      --line:#d8c9cc;--soft-line:rgba(58,51,54,.08);
+      --rose:#8d5860;--rose-2:#c7848d;--rose-soft:#f4dcdf;
+      --sage:#4c7359;--sage-soft:#e2eee6;
+      --amber:#9a6a24;--amber-soft:#f7e9d4;
+      --plum:#6f5b86;--plum-soft:#ece7f2;
+      --brick:#b0474f;--brick-soft:#f6e0e1;
+      --ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      --display:'Fraunces',Georgia,serif;
+      --shadow:0 10px 26px rgba(58,51,54,.07);
+      --radius:14px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{
-      background:var(--paper);
-      color:var(--ink);
-      font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
-      min-width:320px;
-    }
-    ::selection{background:var(--accent-soft);color:var(--ink)}
-    a{color:inherit}
-    a:hover{opacity:0.82}
-    button{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-    a:focus-visible,button:focus-visible{
-      outline:2px solid var(--accent);outline-offset:3px;border-radius:4px;
-    }
-    @keyframes correctPop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
-    @keyframes wrongShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
-    @keyframes glowPulse{0%,100%{box-shadow:0 0 8px rgba(141,88,96,0.22)}50%{box-shadow:0 0 18px rgba(141,88,96,0.4)}}
-    .pop-correct{animation:correctPop 0.35s ease-out}
-    .shake-wrong{animation:wrongShake 0.35s ease-out}
-    .glow-active{animation:glowPulse 1.5s ease-in-out infinite}
+    body{background:var(--paper);color:var(--ink);font-family:var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-width:320px;line-height:1.5}
+    ::selection{background:var(--rose-soft)}
+    a{color:var(--rose)}
+    button,input,select{font:inherit;color:inherit}
+    :focus-visible{outline:2px solid var(--rose);outline-offset:2px;border-radius:4px}
+    .wrap{max-width:1400px;margin:0 auto;padding:0 24px}
+    @media (max-width:767px){.wrap{padding:0 16px}}
+
+    .masthead{padding-top:48px;padding-bottom:28px;border-bottom:1px solid var(--soft-line)}
+    .kicker{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--rose)}
+    .masthead h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,4.6vw,56px);line-height:1.02;letter-spacing:-.02em;margin:10px 0 14px}
+    .masthead h1 em{font-style:italic;color:var(--rose)}
+    .deck{font-size:17px;color:var(--ink-2);max-width:64ch;line-height:1.6}
+
+    .bench{display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr);gap:20px;align-items:start;padding-top:24px}
+    @media (max-width:899px){.bench{grid-template-columns:1fr}}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .controls{position:sticky;top:16px;padding:18px}
+    @media (max-width:899px){.controls{position:static}}
+    .label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .rule{height:1px;background:var(--soft-line);margin:16px 0}
+    .modes{display:grid;gap:6px;margin-top:8px}
+    .modes button{text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;cursor:pointer;transition:border-color .12s,background .12s}
+    .modes button:hover{border-color:var(--rose)}
+    .modes button.on{background:var(--rose-soft);border-color:var(--rose)}
+    .modes b{display:block;font-size:13.5px}
+    .modes span{display:block;font-size:12px;color:var(--muted);line-height:1.45;margin-top:2px}
+    .progress{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .progress .cell{padding:10px 12px;border-radius:10px;background:var(--paper)}
+    .progress .v{font-family:var(--display);font-weight:600;font-size:22px;line-height:1;font-variant-numeric:tabular-nums}
+    .progress .k{font-size:11px;color:var(--muted);margin-top:4px}
+    .legend{display:grid;gap:6px}
+    .legend div{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2)}
+    .btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--rose);background:var(--rose);color:#fff;transition:background .12s,border-color .12s,color .12s;white-space:nowrap}
+    .btn:hover{background:var(--ink);border-color:var(--ink)}
+    .btn.ghost{background:transparent;color:var(--rose)}
+    .btn.ghost:hover{background:var(--rose-soft);border-color:var(--rose);color:var(--rose)}
+    .btn.small{padding:6px 12px;font-size:12px}
+    select.field{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;color:var(--ink)}
+    select.field:focus{border-color:var(--rose);outline:none}
+
+    .panel{padding:16px 18px 18px;margin-bottom:16px}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+    .panel-head h2{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:-.01em}
+    .lede{font-size:13.5px;color:var(--ink-2);line-height:1.55;margin-bottom:12px}
+    .status{font-size:13.5px;font-weight:600;color:var(--ink-2);min-height:22px;margin-bottom:10px}
+    .status.good{color:var(--sage)}
+    .status.hot{color:var(--rose)}
+
+    .unit{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;border:2px solid;flex-shrink:0}
+    .unit.money{color:var(--sage);border-color:var(--sage);background:var(--sage-soft)}
+    .unit.prob{color:var(--plum);border-color:var(--plum);background:var(--plum-soft)}
+    .unit.freq{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+    .unit.ask{color:var(--rose);border-color:var(--rose);background:var(--rose-soft);border-style:dashed}
+
+    .tree,.tree ul{list-style:none}
+    .tree ul{margin-left:14px;padding-left:18px;border-left:2px solid var(--line)}
+    .tree li{position:relative;padding:4px 0}
+    .tree ul>li::before{content:"";position:absolute;left:-18px;top:24px;width:14px;height:2px;background:var(--line)}
+    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);min-height:42px;transition:border-color .15s,box-shadow .15s}
+    .row .abbr{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.01em}
+    .row .nm{font-size:13px;color:var(--ink-2)}
+    .row .aka{font-size:11.5px;color:var(--muted)}
+    .row .def{flex-basis:100%;font-size:12.5px;color:var(--muted);line-height:1.5}
+    .row .src{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--amber);background:var(--amber-soft);border-radius:999px;padding:3px 9px;white-space:nowrap}
+    .row.sourced{border-color:var(--amber)}
+    .row.slot{border-style:dashed;background:transparent;color:var(--muted);letter-spacing:.2em;justify-content:center;min-width:120px}
+    .row.slot.armed{cursor:pointer;border-color:var(--rose)}
+    .row.slot.armed:hover{background:var(--rose-soft)}
+    .row.placed{border-color:var(--rose)}
+    .row.done{border-color:var(--sage)}
+    .row.good{animation:pop .35s ease-out;border-color:var(--sage)}
+    .row.bad{animation:shake .35s ease-out;border-color:var(--brick)}
+    @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+    .ask-units{display:inline-flex;gap:6px;align-items:center;margin-left:auto}
+    .ask-units span{font-size:11.5px;color:var(--rose);font-weight:600;margin-right:2px}
+    .ask-units button{width:30px;height:30px;border-radius:50%;border:2px solid;font-weight:700;font-size:13px;cursor:pointer;background:var(--panel)}
+    .ask-units button.money{color:var(--sage);border-color:var(--sage)}
+    .ask-units button.prob{color:var(--plum);border-color:var(--plum)}
+    .ask-units button.freq{color:var(--amber);border-color:var(--amber)}
+    .ask-units button:hover{transform:scale(1.08)}
+
+    .pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-radius:10px;background:var(--paper);margin-bottom:14px}
+    .chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .12s}
+    .chip:hover{border-color:var(--rose)}
+    .chip.on{background:var(--rose);border-color:var(--rose);color:#fff}
+    .chip small{font-weight:500;color:var(--muted);margin-left:5px}
+    .chip.on small{color:rgba(255,255,255,.8)}
+    .pool .empty{font-size:12.5px;color:var(--muted)}
+
+    .match{display:grid;grid-template-columns:minmax(170px,1fr) minmax(0,2.2fr);gap:14px;align-items:start}
+    @media (max-width:767px){.match{grid-template-columns:1fr}}
+    .names{display:flex;flex-direction:column;gap:6px;position:sticky;top:16px}
+    @media (max-width:767px){.names{position:static;flex-direction:row;flex-wrap:wrap}}
+    .names .chip{text-align:left}
+    .defs{display:grid;gap:8px}
+    .defcard{padding:10px 14px;border-radius:10px;border:1px dashed var(--line);cursor:pointer;transition:border-color .15s,background .15s}
+    .defcard:hover{border-color:var(--rose)}
+    .defcard.matched{border-style:solid;background:var(--panel);cursor:default;border-left-width:3px}
+    .defcard.good{animation:pop .35s ease-out}
+    .defcard.bad{animation:shake .35s ease-out;border-color:var(--brick)}
+    .defcard .who{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12.5px;font-weight:700}
+    .defcard .cat{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+    .defcard .txt{font-family:var(--display);font-style:italic;font-size:14px;color:var(--ink-2);line-height:1.5}
+    .example{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--amber-soft);border-left:3px solid var(--amber);font-size:13px;line-height:1.6;color:var(--ink-2)}
+    .example b{color:var(--amber)}
+    details.sources{margin-top:8px}
+    details.sources summary{cursor:pointer;font-size:12.5px;color:var(--ink-2);font-weight:600}
+    details.sources ul{margin:8px 0 0 16px}
+    details.sources li{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+    .finish{margin-top:14px;padding:16px;border-radius:10px;background:var(--sage-soft);border-left:3px solid var(--sage);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .finish b{font-family:var(--display);font-size:18px;font-weight:600}
+    .finish span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:2px}
+
+    .notes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-top:28px;padding-bottom:80px}
+    @media (max-width:899px){.notes{grid-template-columns:1fr}}
+    .note h3{font-family:var(--display);font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+    .note p{font-size:14px;color:var(--ink-2);line-height:1.65}
+    .notes.embedded{padding-top:8px}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.row.good,.row.bad,.defcard.good,.defcard.bad{animation:none}}
   </style>
 </head>
 <body>
@@ -73,750 +165,322 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script>
   'use strict';
-  var h=React.createElement,useState=React.useState,useEffect=React.useEffect,useRef=React.useRef;
+  const {useState,useEffect,useMemo,createElement:el}=React;
 
-  var C={
-    bg:"#f7ebed",bgCard:"#ffffff",bgBand:"#f0dee0",
-    border:"rgba(58,51,54,0.08)",borderLight:"#d8c9cc",
-    text:"#3a3336",textMuted:"#4d4548",textDim:"#7a7073",
-    accent:"#8d5860",accent2:"#c7848d",accentSoft:"#f4dcdf",
-    accentGlow:"rgba(199,132,141,0.28)",
-    danger:"#b0474f",dangerSoft:"#f6e0e1",
-    sage:"#4c7359",sageSoft:"#e2eee6",
-    amber:"#9a6a24",amberSoft:"#f7e9d4",
-    plum:"#6f5b86",plumSoft:"#ece7f2",
-    shadow:"0 14px 36px rgba(58,51,54,0.13)"
+  // The portfolio risk lab renders this page inside an iframe and supplies its
+  // own heading, so the masthead is dropped when we are not the top window.
+  const EMBEDDED=(()=>{try{return window.self!==window.top;}catch(e){return true;}})();
+  const BENCHMARKS_URL="./risk-benchmarks.json";
+
+  // ------------------------------------------------------------- taxonomy
+  // The thirteen factors, in tree order. Units: money, probability, frequency.
+  // Definitions are written for the drill; the standard's own text lives with
+  // its publisher.
+  const NODES={
+    risk:{abbr:"Risk",name:"Risk",unit:"$",kids:["lef","lm"],
+      def:"How often future loss is likely to occur and how large it is likely to be, taken together."},
+    lef:{abbr:"LEF",name:"Loss Event Frequency",unit:"#",kids:["tef","susc"],
+      def:"How often, within a given timeframe, a threat's actions are expected to actually cause harm to the asset."},
+    lm:{abbr:"LM",name:"Loss Magnitude",unit:"$",kids:["pl","sl"],
+      def:"How much loss is expected to result from a single loss event."},
+    tef:{abbr:"TEF",name:"Threat Event Frequency",unit:"#",kids:["cf","poa"],
+      def:"How often a threat is expected to act against the asset in a way that could cause loss, whether or not it succeeds."},
+    susc:{abbr:"Susc",name:"Susceptibility",aka:"also called Vulnerability",unit:"%",kids:["tcap","rs"],
+      def:"The probability that a threat event becomes a loss event: that the attempt succeeds."},
+    pl:{abbr:"PL",name:"Primary Loss",unit:"$",kids:[],
+      def:"Loss borne directly by the organisation as an immediate result of the event."},
+    sl:{abbr:"SL",name:"Secondary Loss",unit:"$",kids:["slef","slm"],
+      def:"Loss that follows from how outside parties react to the event, rather than from the event itself."},
+    cf:{abbr:"CF",name:"Contact Frequency",unit:"#",kids:[],
+      def:"How often the threat comes into contact with the asset at all."},
+    poa:{abbr:"PoA",name:"Probability of Action",unit:"%",kids:[],
+      def:"The chance that a threat, once in contact, decides to act against the asset."},
+    tcap:{abbr:"TCap",name:"Threat Capability",unit:"%",kids:[],
+      def:"How capable the threat is of overcoming the controls that resist it."},
+    rs:{abbr:"RS",name:"Resistance Strength",unit:"%",kids:[],
+      def:"How well the resisting controls hold up against the range of threats they face."},
+    slef:{abbr:"SLEF",name:"Secondary Loss Event Frequency",unit:"%",kids:[],
+      def:"The share of loss events expected to draw a reaction from outside parties."},
+    slm:{abbr:"SLM",name:"Secondary Loss Magnitude",unit:"$",kids:[],
+      def:"How much loss is expected from those outside reactions when they occur."},
   };
-  C.success=C.sage;
-  var ui="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-  var display="'Fraunces', Georgia, serif";
-  var LINE_COLOR="#d8c9cc";
-
-  var eyebrow={fontFamily:ui,fontSize:11,fontWeight:600,letterSpacing:"0.14em",textTransform:"uppercase"};
-  function cardStyle(mb,pad){
-    return {background:C.bgCard,border:"1px solid "+C.borderLight,borderRadius:16,
-      boxShadow:"0 10px 26px rgba(58,51,54,0.06)",padding:pad||(mb?"16px":"20px 24px")};
-  }
-
-  function useIsMobile(bp){var s=useState(false),m=s[0],set=s[1];useEffect(function(){function c(){set(window.innerWidth<(bp||768))}c();window.addEventListener("resize",c);return function(){window.removeEventListener("resize",c)};},[bp]);return m;}
-
-  // ============================================================
-  // FAIR MODEL DATA — V3.0, January 2025
-  // ============================================================
-  var NODES={
-    risk:{id:"risk",abbr:"Risk",name:"Risk",def:"The probable frequency and probable magnitude of future loss",unit:"$",children:["lef","lm"]},
-    lef:{id:"lef",abbr:"LEF",name:"Loss Event Frequency",def:"The probable frequency that a threat agent's actions will inflict harm upon an asset",unit:"#",children:["tef","susc"]},
-    lm:{id:"lm",abbr:"LM",name:"Loss Magnitude",def:"The probable magnitude of loss resulting from a loss event",unit:"$",children:["pl","sl"]},
-    tef:{id:"tef",abbr:"TEF",name:"Threat Event Frequency",def:"The probable frequency that a threat agent will act in a manner that may result in loss",unit:"#",children:["cf","poa"]},
-    susc:{id:"susc",abbr:"Susc",name:"Susceptibility",def:"The probability that a threat event will become a loss event",unit:"%",children:["tcap","rs"]},
-    pl:{id:"pl",abbr:"PL",name:"Primary Loss",def:"Loss that occurs directly as a result of the loss event",unit:"$",children:[]},
-    sl:{id:"sl",abbr:"SL",name:"Secondary Loss",def:"Loss that occurs indirectly from a loss event due to secondary stakeholder reactions",unit:"$",children:["slef","slm"]},
-    cf:{id:"cf",abbr:"CF",name:"Contact Frequency",def:"The frequency a threat agent will come into contact with an asset",unit:"#",children:[]},
-    poa:{id:"poa",abbr:"PoA",name:"Probability of Action",def:"The probability a threat agent will act against an asset once contact has occurred",unit:"%",children:[]},
-    tcap:{id:"tcap",abbr:"TCap",name:"Threat Capability",def:"A threat agent's ability to defeat resistive controls",unit:"%",children:[]},
-    rs:{id:"rs",abbr:"RS",name:"Resistance Strength",def:"The efficacy of resistive controls against the overall threat population",unit:"%",children:[]},
-    slef:{id:"slef",abbr:"SLEF",name:"Sec. Loss Event Freq.",def:"The percentage of loss events expected to have secondary effects",unit:"%",children:[]},
-    slm:{id:"slm",abbr:"SLM",name:"Sec. Loss Magnitude",def:"How much loss is expected from secondary stakeholder reactions",unit:"$",children:[]},
-  };
-  var ALL_IDS=["risk","lef","lm","tef","susc","pl","sl","cf","poa","tcap","rs","slef","slm"];
-
-  var FORMS_OF_LOSS=[
-    {name:"Productivity Loss",def:"Reduction in organizational efficiency and effectiveness due to the loss event"},
-    {name:"Response Costs",def:"Expenses incurred while addressing and mitigating the effects of a loss event"},
-    {name:"Replacement Costs",def:"Expenditures related to restoring or replacing lost or damaged assets"},
-    {name:"Fines and Judgments",def:"Financial penalties and legal settlements from regulatory violations or lawsuits"},
-    {name:"Reputation Damage",def:"Long-term impact on the organization's brand and customer trust"},
-    {name:"Competitive Advantage Loss",def:"When the loss event undermines the organization's market position or strategic initiatives"},
+  const ROOT="risk";
+  const NODE_IDS=Object.keys(NODES);
+  const FORMS=[
+    ["Productivity Loss","Output the organisation fails to deliver because the event disrupted its work."],
+    ["Response Costs","What it costs to deal with the event: investigation, containment, recovery, notification."],
+    ["Replacement Costs","The cost of repairing or replacing what the event damaged or destroyed."],
+    ["Fines and Judgments","Penalties imposed by regulators, and settlements or damages arising from legal action."],
+    ["Reputation Damage","Future business and standing lost because of how the event changed perceptions of the organisation."],
+    ["Competitive Advantage Loss","Ground ceded to competitors, for instance through leaked strategy or intellectual property."],
   ];
-
-  var POA_SUBFACTORS=[
-    {name:"Perceived Value",def:"The value the threat agent believes they will gain by acting against the asset"},
-    {name:"Level of Effort",def:"The amount of work and resources the threat agent believes will be required to act"},
-    {name:"Risk to Threat Agent",def:"The probability and severity of negative consequences the threat agent faces from acting"},
+  const SUBS=[
+    ["Perceived Value","What the threat believes it stands to gain from acting."],
+    ["Level of Effort","How much work the threat expects that acting will take."],
+    ["Risk to Threat Agent","The consequences the threat expects to face if it acts."],
   ];
-
-  // Unified quiz pool: 13 components + 6 forms of loss + 3 PoA sub-factors = 22 items
-  var QUIZ_ITEMS=[];
-  ALL_IDS.forEach(function(id){
-    var n=NODES[id];
-    QUIZ_ITEMS.push({qid:"node_"+id,name:n.abbr+" – "+n.name,def:n.def,cat:"component",unit:n.unit});
-  });
-  FORMS_OF_LOSS.forEach(function(f,i){
-    QUIZ_ITEMS.push({qid:"fol_"+i,name:f.name,def:f.def,cat:"form_of_loss",unit:null});
-  });
-  POA_SUBFACTORS.forEach(function(f,i){
-    QUIZ_ITEMS.push({qid:"poa_"+i,name:f.name,def:f.def,cat:"poa_sub",unit:null});
-  });
-  var ALL_QIDS=QUIZ_ITEMS.map(function(q){return q.qid;});
-  var QMAP={};QUIZ_ITEMS.forEach(function(q){QMAP[q.qid]=q;});
-
-  var CAT_COLORS={component:C.sage,form_of_loss:C.accent,poa_sub:C.plum};
-  var CAT_SOFT={component:C.sageSoft,form_of_loss:C.accentSoft,poa_sub:C.plumSoft};
-  var CAT_LABELS={component:"Model Component",form_of_loss:"Form of Loss",poa_sub:"PoA Sub-factor"};
-
-  var UNIT_MAP={
-    "$":{color:C.sage,soft:C.sageSoft,label:"Dollars"},
-    "%":{color:C.plum,soft:C.plumSoft,label:"Probability"},
-    "#":{color:C.amber,soft:C.amberSoft,label:"Frequency"}
+  const CATS={
+    factor:{label:"Factor",color:"var(--sage)",soft:"var(--sage-soft)"},
+    form:{label:"Form of loss",color:"var(--rose)",soft:"var(--rose-soft)"},
+    sub:{label:"PoA sub-factor",color:"var(--plum)",soft:"var(--plum-soft)"},
   };
+  const ITEMS=[]
+    .concat(NODE_IDS.map(id=>({id:"f:"+id,name:NODES[id].abbr+" · "+NODES[id].name,def:NODES[id].def,cat:"factor",unit:NODES[id].unit})))
+    .concat(FORMS.map((f,i)=>({id:"l:"+i,name:f[0],def:f[1],cat:"form"})))
+    .concat(SUBS.map((s,i)=>({id:"s:"+i,name:s[0],def:s[1],cat:"sub"})));
+  const ITEM={};ITEMS.forEach(it=>{ITEM[it.id]=it;});
 
-  function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=0|Math.random()*(i+1);var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+  const UNIT={"$":{cls:"money",label:"money"},"%":{cls:"prob",label:"probability"},"#":{cls:"freq",label:"frequency, a count per period"}};
+  const SYMBOL={USD:"$",AUD:"A$",CAD:"C$",GBP:"£",EUR:"€"};
+  // A published benchmark reports two of the thirteen: how often, and how much.
+  const SOURCED={lef:"frequency",lm:"impact"};
 
-  // ============================================================
-  // SECTION LABEL
-  // ============================================================
-  // Acts are labelled, not numbered — the badge that used to carry `n` is gone
-  // and the label takes the act's colour instead.
-  function SectionLabel(p){
-    return h('div',{style:{display:"flex",alignItems:"center",marginBottom:20}},
-      h('div',{style:Object.assign({},eyebrow,{fontSize:12,letterSpacing:"0.14em",color:p.color||C.accent})},p.label));
+  function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=b[i];b[i]=b[j];b[j]=t;}return b;}
+  function money(v,ccy){const s=SYMBOL[ccy]||(ccy+" ");if(v>=1e6)return s+(v/1e6).toFixed(1)+"M";if(v>=1e3)return s+Math.round(v/1e3)+"K";return s+Math.round(v);}
+  function tidyNum(v){return Number.isInteger(v)?String(v):String(+v.toPrecision(2));}
+  function rangeFor(bm,id){
+    if(!bm||!SOURCED[id])return null;
+    const t=bm[SOURCED[id]];if(!t)return null;
+    const f=id==="lm"?v=>money(v,bm.currency):tidyNum;
+    return f(t.min)+" / "+f(t.likely)+" / "+f(t.max)+(id==="lm"?" per event":" per year");
+  }
+  function pctOf(a,b){return b>0?Math.round(a/b*100)+"%":"—";}
+
+  // ---------------------------------------------------------------- pieces
+  function UnitBadge({unit,ask}){
+    if(ask)return el('span',{className:"unit ask",title:"unit not yet assigned"},"?");
+    const u=UNIT[unit];
+    return el('span',{className:"unit "+u.cls,title:u.label},unit);
+  }
+  function Tree({renderRow}){
+    function Branch({id}){
+      const n=NODES[id];
+      return el('li',null,renderRow(id),n.kids.length>0&&el('ul',null,n.kids.map(k=>el(Branch,{key:k,id:k}))));
+    }
+    return el('ul',{className:"tree"},el(Branch,{id:ROOT}));
   }
 
-  // ============================================================
-  // UNIT BADGE
-  // ============================================================
-  function UnitBadge(p){
-    var u=UNIT_MAP[p.unit],sz=p.size||24,fs=p.fs||12;
-    return h('div',{style:{width:sz,height:sz,borderRadius:"50%",background:u.soft,border:"2px solid "+u.color,display:"inline-flex",alignItems:"center",justifyContent:"center",fontFamily:ui,fontSize:fs,fontWeight:700,color:u.color,flexShrink:0}},p.unit);
+  // ------------------------------------------------------------------ walk
+  function WalkMode({list,err,sel,setSel,showDefs}){
+    const bm=list.find(b=>b.id===sel)||null;
+    const prov=bm&&bm.provenance?Object.keys(bm.provenance):[];
+    return el('div',null,
+      el(Tree,{renderRow:id=>{
+        const n=NODES[id],rng=rangeFor(bm,id);
+        return el('div',{className:"row"+(rng?" sourced":"")},
+          el('span',{className:"abbr"},n.abbr),
+          el('span',{className:"nm"},n.name),
+          n.aka&&el('span',{className:"aka"},"("+n.aka+")"),
+          el(UnitBadge,{unit:n.unit}),
+          rng&&el('span',{className:"src"},"sourced · "+rng),
+          showDefs&&el('span',{className:"def"},n.def));
+      }}),
+      el('div',{className:"example"},
+        el('div',{style:{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap",marginBottom:8}},
+          el('b',null,"Worked example"),
+          err?el('span',{style:{fontSize:12.5,color:"var(--muted)"}},"benchmarks unavailable ("+err+")")
+          :el('select',{className:"field",style:{maxWidth:420},value:sel,"aria-label":"Benchmark to load onto the tree",onChange:e=>setSel(e.target.value)},
+            el('option',{value:""},list.length?"Load a source-backed scenario onto the tree":"Loading…"),
+            list.map(b=>el('option',{key:b.id,value:b.id},b.label)))),
+        bm
+          ?el('div',null,
+            el('b',null,"2 of 13 factors have a published number. "),
+            "A loss study reports how often the event happens and what it costs, which is Loss Event Frequency and Loss Magnitude and nothing below them. Nobody measures contact frequency, probability of action, threat capability or resistance strength across a population. The eleven empty factors are not missing data: they are the analysis, and they are why the decomposition is worth knowing cold.",
+            prov.length>0&&el('details',{className:"sources"},
+              el('summary',null,"Sources behind the two filled factors ("+prov.length+")"),
+              el('ul',null,prov.map(k=>{const p=bm.provenance[k];return el('li',{key:k},k," — ",p.url?el('a',{href:p.url,target:"_blank",rel:"noopener"},p.source_name||"source"):(p.source_name||"unattributed"),p.confidence?" · "+p.confidence+" confidence":null,p.limitations?el('div',null,p.limitations):null);}))))
+          :"Pick a scenario and watch how little of the tree it fills. The gap is the lesson."));
   }
 
-  // ============================================================
-  // RECURSIVE TREE WITH BRANCH LINES
-  // ============================================================
-  // This renders a node and recursively its children, with proper
-  // T-shaped connector lines between parent and children.
+  // --------------------------------------------------------------- rebuild
+  function RebuildMode({report}){
+    const [pool,setPool]=useState(()=>shuffle(NODE_IDS));
+    const [held,setHeld]=useState(null);        // component picked from the pool
+    const [placed,setPlaced]=useState({});      // id -> true
+    const [units,setUnits]=useState({});        // id -> unit
+    const [asking,setAsking]=useState(null);    // id awaiting a unit
+    const [flash,setFlash]=useState({});        // id -> "good" | "bad"
+    const [tries,setTries]=useState({place:0,placeOk:0,unit:0,unitOk:0});
 
-  function TreeBranch(p){
-    var nodeId=p.nodeId,renderNode=p.renderNode,mb=p.mb;
-    var node=NODES[nodeId];
-    var children=node.children;
-    var vH=mb?20:28; // vertical connector height
+    const placedN=Object.keys(placed).length,unitsN=Object.keys(units).length;
+    const finished=unitsN>=NODE_IDS.length;
+    useEffect(()=>{report({placedN,unitsN,tries,finished});},[placedN,unitsN,tries,finished]);
 
-    // Leaf node — just render the node
-    if(children.length===0){
-      return h('div',{style:{display:"flex",flexDirection:"column",alignItems:"center"}},
-        renderNode(nodeId));
+    function blink(id,kind){
+      setFlash(f=>Object.assign({},f,{[id]:kind}));
+      setTimeout(()=>setFlash(f=>{const n=Object.assign({},f);delete n[id];return n;}),420);
+    }
+    function dropOn(slot){
+      if(asking||!held||placed[slot])return;
+      setTries(t=>Object.assign({},t,{place:t.place+1,placeOk:t.placeOk+(held===slot?1:0)}));
+      if(held===slot){
+        setPlaced(p=>Object.assign({},p,{[slot]:true}));
+        setPool(p=>p.filter(x=>x!==slot));
+        setHeld(null);setAsking(slot);blink(slot,"good");
+      }else blink(slot,"bad");
+    }
+    function answerUnit(u){
+      if(!asking)return;
+      const ok=NODES[asking].unit===u;
+      setTries(t=>Object.assign({},t,{unit:t.unit+1,unitOk:t.unitOk+(ok?1:0)}));
+      if(ok){setUnits(x=>Object.assign({},x,{[asking]:u}));blink(asking,"good");setAsking(null);}
+      else blink(asking,"bad");
     }
 
-    // Parent with children
-    return h('div',{style:{display:"flex",flexDirection:"column",alignItems:"center"}},
-      // The node itself
-      renderNode(nodeId),
-      // Vertical line down from parent
-      h('div',{style:{width:2,height:vH,background:LINE_COLOR,flexShrink:0}}),
-      // Children row with horizontal connector
-      h('div',{style:{display:"flex",alignItems:"flex-start"}},
-        children.map(function(cid,i){
-          return h('div',{key:cid,style:{display:"flex",flexDirection:"column",alignItems:"center",position:"relative",margin:"0 "+(mb?2:4)+"px"}},
-            // Horizontal connector segment
-            // First child: right half. Last child: left half. Middle: full width.
-            children.length>1&&h('div',{style:{
-              position:"absolute",top:0,height:2,background:LINE_COLOR,
-              left:i===0?"50%":"0",
-              right:i===children.length-1?"50%":"0"
-            }}),
-            // Vertical line down to child
-            h('div',{style:{width:2,height:vH,background:LINE_COLOR,flexShrink:0}}),
-            // Recurse
-            h(TreeBranch,{nodeId:cid,renderNode:renderNode,mb:mb}));
-        })));
-  }
+    let status,cls="";
+    if(finished){status="Every factor is placed and every unit is right. Rebuild it again until it is boring.";cls="good";}
+    else if(asking){status="Which unit does "+NODES[asking].abbr+" carry? Answer in its row.";cls="hot";}
+    else if(held){status="Where does "+NODES[held].abbr+" ("+NODES[held].name+") sit? Tap the slot.";}
+    else status="Pick a factor from the pool, then tap the slot where it belongs.";
 
-  // ============================================================
-  // SCALE-TO-FIT WRAPPER — shrinks tree to fit viewport
-  // ============================================================
-  function ScaledTreeWrap(p){
-    var containerRef=useRef(null);
-    var innerRef=useRef(null);
-    var s=useState(1),scale=s[0],setScale=s[1];
-    var s2=useState(null),h_=s2[0],setH=s2[1];
-
-    useEffect(function(){
-      function measure(){
-        var c=containerRef.current,inner=innerRef.current;
-        if(!c||!inner)return;
-        var avail=c.clientWidth;
-        var natural=inner.scrollWidth;
-        if(natural>avail&&natural>0){
-          var sc=Math.max(0.4,avail/natural);
-          setScale(sc);
-          setH(Math.ceil(inner.scrollHeight*sc));
-        }else{
-          setScale(1);
-          setH(null);
+    return el('div',null,
+      el('div',{className:"status "+cls},status),
+      !finished&&el('div',{className:"pool","aria-label":"Factors still to place"},
+        pool.length?pool.map(id=>el('button',{key:id,type:"button",className:"chip"+(held===id?" on":""),disabled:!!asking,onClick:()=>setHeld(h=>h===id?null:id)},NODES[id].abbr,el('small',null,NODES[id].name)))
+        :el('span',{className:"empty"},"All placed. Finish the units.")),
+      el(Tree,{renderRow:id=>{
+        const n=NODES[id],fl=flash[id]||"";
+        if(!placed[id]){
+          const armed=!!held&&!asking;
+          return el('div',{className:"row slot"+(armed?" armed":"")+(fl?" "+fl:""),role:"button",tabIndex:armed?0:-1,
+            onClick:()=>dropOn(id),onKeyDown:e=>{if(e.key==="Enter"||e.key===" ")dropOn(id);},
+            "aria-label":"empty slot"},"· · ·");
         }
-      }
-      measure();
-      window.addEventListener("resize",measure);
-      var obs=typeof ResizeObserver!=="undefined"?new ResizeObserver(measure):null;
-      if(obs&&innerRef.current)obs.observe(innerRef.current);
-      return function(){window.removeEventListener("resize",measure);if(obs)obs.disconnect();};
-    });
-
-    return h('div',{ref:containerRef,style:{width:"100%",overflow:"hidden",height:h_!=null?h_:"auto"}},
-      h('div',{ref:innerRef,style:{
-        display:"flex",justifyContent:"center",width:"max-content",margin:"0 auto",
-        transform:scale<1?"scale("+scale+")":"none",
-        transformOrigin:"top left"
-      }},p.children));
+        const done=!!units[id];
+        return el('div',{className:"row "+(done?"done":"placed")+(fl?" "+fl:"")},
+          el('span',{className:"abbr"},n.abbr),
+          el('span',{className:"nm"},n.name),
+          done?el(UnitBadge,{unit:units[id]}):el(UnitBadge,{ask:true}),
+          asking===id&&el('span',{className:"ask-units"},
+            el('span',null,"unit?"),
+            ["$","%","#"].map(u=>el('button',{key:u,type:"button",className:UNIT[u].cls,onClick:()=>answerUnit(u),"aria-label":UNIT[u].label},u))));
+      }}),
+      finished&&el('div',{className:"finish"},
+        el('div',null,el('b',null,"Tree rebuilt"),el('span',null,"Placement "+pctOf(tries.placeOk,tries.place)+" first-time right · units "+pctOf(tries.unitOk,tries.unit)))));
   }
 
-  // ============================================================
-  // STUDY MODE
-  // ============================================================
-  var BENCHMARKS_URL="./risk-benchmarks.json";
+  // ----------------------------------------------------------------- match
+  function MatchMode({report}){
+    const [names,setNames]=useState(()=>shuffle(ITEMS.map(i=>i.id)));
+    const [cards]=useState(()=>shuffle(ITEMS.map(i=>i.id)));
+    const [held,setHeld]=useState(null);
+    const [matched,setMatched]=useState({});
+    const [flash,setFlash]=useState({});
+    const [tries,setTries]=useState({n:0,ok:0});
+    const matchedN=Object.keys(matched).length;
+    const finished=matchedN>=ITEMS.length;
+    useEffect(()=>{report({matchedN,tries,finished});},[matchedN,tries,finished]);
 
-  // A published shard reports an annualised event frequency and a per-event
-  // loss. In FAIR terms that is LEF and LM, and nothing else: the two children
-  // of Risk. The eleven nodes beneath them have no published equivalent.
-  var SOURCED_NODES={lef:"frequency",lm:"impact"};
+    function blink(id,kind){
+      setFlash(f=>Object.assign({},f,{[id]:kind}));
+      setTimeout(()=>setFlash(f=>{const n=Object.assign({},f);delete n[id];return n;}),420);
+    }
+    function pick(card){
+      if(!held||matched[card])return;
+      const ok=held===card;
+      setTries(t=>({n:t.n+1,ok:t.ok+(ok?1:0)}));
+      if(ok){setMatched(m=>Object.assign({},m,{[card]:true}));setNames(ns=>ns.filter(x=>x!==held));setHeld(null);blink(card,"good");}
+      else blink(card,"bad");
+    }
 
-  var CCY={USD:"$",AUD:"A$",CAD:"C$",GBP:"\u00a3"};
-  function money(v,c){
-    var s=CCY[c]||((c||"")+" ");
-    if(v>=1e6)return s+(v/1e6).toFixed(1)+"M";
-    if(v>=1e3)return s+Math.round(v/1e3)+"K";
-    return s+Math.round(v);
-  }
-  function nodeRange(bm,id){
-    if(!bm||!SOURCED_NODES[id])return null;
-    var t=bm[SOURCED_NODES[id]];
-    if(!t)return null;
-    var fmt=id==="lm"?function(v){return money(v,bm.currency);}
-                     :function(v){return String(v);};
-    return fmt(t.min)+" / "+fmt(t.likely)+" / "+fmt(t.max);
-  }
-
-  function StudyNodeBox(p){
-    var mb=p.mb,node=NODES[p.id],rng=p.range;
-    return h('div',{style:{
-      background:rng?C.amberSoft:C.bgCard,
-      border:"2px solid "+(rng?C.amber:C.sage),borderRadius:12,
-      boxShadow:"0 6px 16px rgba(58,51,54,0.06)",
-      padding:mb?"8px 6px":"10px 12px",
-      width:mb?105:150,textAlign:"center"
-    }},
-      h('div',{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:5,marginBottom:3}},
-        h('span',{style:{fontFamily:display,fontSize:mb?15:18,fontWeight:700,color:C.text}},node.abbr),
-        h(UnitBadge,{unit:node.unit,size:mb?20:24,fs:mb?10:12})),
-      h('div',{style:{fontFamily:ui,fontSize:mb?9:10,fontWeight:500,color:C.textDim,lineHeight:1.35}},node.name),
-      rng?h('div',{style:{fontFamily:ui,fontSize:mb?8.5:9.5,fontWeight:700,color:C.amber,
-        marginTop:4,paddingTop:4,borderTop:"1px solid "+C.amber+"55",lineHeight:1.3}},rng):null);
-  }
-
-  function StudyTree(p){
-    var mb=p.mb,bm=p.benchmark;
-    function renderNode(id){return h(StudyNodeBox,{id:id,mb:mb,range:nodeRange(bm,id)});}
-    return h(ScaledTreeWrap,null,
-      h(TreeBranch,{nodeId:"risk",renderNode:renderNode,mb:mb}));
+    return el('div',null,
+      el('div',{className:"status "+(finished?"good":held?"hot":"")},
+        finished?"All twenty-two matched.":held?"Now tap the definition of "+ITEM[held].name+".":"Tap a name on the left, then the definition it belongs to."),
+      el('div',{className:"match"},
+        el('div',{className:"names","aria-label":"Names still to match"},
+          names.length?names.map(id=>el('button',{key:id,type:"button",className:"chip"+(held===id?" on":""),onClick:()=>setHeld(h=>h===id?null:id)},ITEM[id].name))
+          :el('span',{style:{fontSize:12.5,color:"var(--muted)"}},"Nothing left to place.")),
+        el('div',{className:"defs"},cards.map(id=>{
+          const it=ITEM[id],isM=!!matched[id],fl=flash[id]||"",c=CATS[it.cat];
+          return el('div',{key:id,className:"defcard"+(isM?" matched":"")+(fl?" "+fl:""),
+            style:isM?{borderColor:c.color}:null,
+            role:"button",tabIndex:isM?-1:0,onClick:()=>pick(id),onKeyDown:e=>{if(e.key==="Enter"||e.key===" ")pick(id);}},
+            isM&&el('div',{className:"who"},
+              el('span',{style:{color:c.color}},it.name),
+              it.unit&&el(UnitBadge,{unit:it.unit}),
+              el('span',{className:"cat",style:{background:c.soft,color:c.color}},c.label)),
+            el('div',{className:"txt"},"“"+it.def+"”"));
+        }))),
+      finished&&el('div',{className:"finish"},
+        el('div',null,el('b',null,"Definitions matched"),el('span',null,pctOf(tries.ok,tries.n)+" of taps were right on the first try."))));
   }
 
-  // The panel that makes the point the highlight only hints at.
-  function WorkedExample(p){
-    var mb=p.mb,list=p.list,error=p.error,sel=p.selected,onSel=p.onSelect;
-    var bm=list.filter(function(b){return b.id===sel;})[0];
-    var total=Object.keys(NODES).length,filled=Object.keys(SOURCED_NODES).length;
-    var card={background:C.bgCard,border:"1px solid "+C.border,borderRadius:14,
-      padding:mb?16:22,marginTop:22,textAlign:"left"};
-    var body={fontFamily:ui,fontSize:mb?12.5:13.5,lineHeight:1.7,color:C.textMuted,marginBottom:10};
-
-    if(error)return h('div',{style:card},
-      h('div',{style:body},"Worked example unavailable (",error,"). The drill is unaffected."));
-
-    return h('div',{style:card},
-      h('div',{style:{fontFamily:ui,fontSize:11,fontWeight:700,letterSpacing:"0.1em",
-        textTransform:"uppercase",color:C.amber,marginBottom:8}},"Worked example"),
-      h('div',{style:body},
-        "Load a real, source-backed scenario onto the tree and watch how little of it fills in."),
-      h('select',{value:sel,onChange:function(e){onSel(e.target.value);},
-        style:{fontFamily:ui,fontSize:mb?14:13,background:C.bg,color:C.text,
-          border:"1px solid "+C.border,borderRadius:8,padding:"9px 10px",width:"100%",outline:"none"}},
-        h('option',{value:""},list.length?"None — show the empty model":"Loading\u2026"),
-        list.map(function(b){return h('option',{key:b.id,value:b.id},b.label);})),
-      bm?h('div',{style:{marginTop:14}},
-        h('div',{style:{background:C.amberSoft,borderLeft:"3px solid "+C.amber,borderRadius:8,
-          padding:mb?"11px 13px":"13px 16px",marginBottom:12}},
-          h('div',{style:{fontFamily:ui,fontSize:mb?12.5:13.5,lineHeight:1.7,color:C.textMuted}},
-            h('strong',{style:{color:C.amber}},filled+" of "+total+" nodes filled. "),
-            "A published loss study reports how often the event happens and how much it costs \u2014 Loss Event Frequency and Loss Magnitude. It reports nothing about contact frequency, probability of action, threat capability, or resistance strength, because no one measures those across a population. The eleven empty nodes are not missing data. They are the analysis, and they are why the decomposition is worth memorising.")),
-        h('details',null,
-          h('summary',{style:{cursor:"pointer",fontFamily:ui,fontSize:12.5,color:C.textMuted}},
-            "Sources behind the two filled nodes"),
-          h('ul',{style:{margin:"10px 0 0 18px"}},
-            Object.keys(bm.provenance||{}).map(function(k){
-              var pr=bm.provenance[k];
-              return h('li',{key:k,style:{fontFamily:ui,fontSize:11.5,color:C.textDim,
-                lineHeight:1.55,marginBottom:8}},
-                k," \u2014 ",
-                pr.url?h('a',{href:pr.url,target:"_blank",rel:"noopener",style:{color:C.accent}},pr.source_name)
-                      :(pr.source_name||"unattributed"),
-                pr.confidence?" \u00b7 "+pr.confidence+" confidence":"",
-                pr.limitations?h('div',{style:{fontSize:11,marginTop:2}},pr.limitations):null);
-            })))):null);
+  // ----------------------------------------------------------------- notes
+  function Notes(){
+    return el('section',{className:"wrap notes"+(EMBEDDED?" embedded":""),"aria-label":"Notes"},
+      el('div',{className:"note"},el('h3',null,"Why the units matter"),
+        el('p',null,"The tree is a calculation, not a diagram. Frequencies multiply by probabilities to make smaller frequencies; a frequency times a magnitude is an expected loss. If you cannot say what unit a factor carries you cannot say what arithmetic connects it to its parent, and an estimate with the wrong unit is not wrong by a little.")),
+      el('div',{className:"note"},el('h3',null,"Why two fill and eleven do not"),
+        el('p',null,"Published loss data lives at exactly two nodes: how often an event type occurs, and what it tends to cost. Everything beneath them is specific to one organisation's assets, threats and controls, which is why no survey can supply it. Learning the tree is learning where your own judgement has to enter, and where a citation can do the work instead.")),
+      el('div',{className:"note"},el('h3',null,"What to do with it"),
+        el('p',null,"Rebuild until you stop hesitating, then use the tree the way it is meant to be used: decompose a scenario only as far down as you have something to say. Estimating Loss Event Frequency directly is legitimate when you have incident data; splitting it into contact, action and susceptibility is for when you do not.")));
   }
 
-  // ============================================================
-  // PRACTICE MODE — INTERLEAVED COMPONENT + UNIT PLACEMENT
-  // ============================================================
-  function PracticeMode(p){
-    var mb=p.mb,onReset=p.onReset;
-
-    // What's placed where
-    var s1=useState({}),placed=s1[0],setPlaced=s1[1];           // {slotId: true}
-    var s2=useState({}),units=s2[0],setUnits=s2[1];             // {slotId: "$"|"%"|"#"}
-    var s3=useState(function(){return shuffle(ALL_IDS);}),pool=s3[0],setPool=s3[1];
-    var s4=useState(null),selected=s4[0],setSelected=s4[1];     // nodeId picked from pool
-    var s5=useState(null),unitTarget=s5[0],setUnitTarget=s5[1]; // slotId awaiting unit
-    var s6=useState({}),slotFb=s6[0],setSlotFb=s6[1];           // {slotId: "correct"|"wrong"}
-    var s7=useState(0),compScore=s7[0],setCompScore=s7[1];
-    var s8=useState(0),compTries=s8[0],setCompTries=s8[1];
-    var s9=useState(0),unitScore=s9[0],setUnitScore=s9[1];
-    var s10=useState(0),unitTries=s10[0],setUnitTries=s10[1];
-
-    var allDone=Object.keys(units).length>=ALL_IDS.length;
-    var placedCount=Object.keys(placed).length;
-    var unitCount=Object.keys(units).length;
-
-    function flash(slotId,type){
-      setSlotFb(function(f){var n={};for(var k in f)n[k]=f[k];n[slotId]=type;return n;});
-      setTimeout(function(){
-        setSlotFb(function(f){var n={};for(var k in f)n[k]=f[k];delete n[slotId];return n;});
-      },450);
-    }
-
-    // Tap a component in the pool
-    function pickFromPool(id){
-      if(unitTarget) return; // busy assigning a unit
-      setSelected(function(prev){return prev===id?null:id;});
-    }
-
-    // Tap an empty slot to place the selected component
-    function tapSlot(slotId){
-      if(unitTarget) return;
-      if(placed[slotId]) return;
-      if(!selected) return;
-
-      setCompTries(function(t){return t+1;});
-
-      if(selected===slotId){
-        // Correct!
-        setCompScore(function(s){return s+1;});
-        setPlaced(function(p){var n={};for(var k in p)n[k]=p[k];n[slotId]=true;return n;});
-        setPool(function(pp){return pp.filter(function(id){return id!==selected;});});
-        flash(slotId,"correct");
-        setSelected(null);
-        // Immediately prompt for unit
-        setUnitTarget(slotId);
-      } else {
-        flash(slotId,"wrong");
-      }
-    }
-
-    // Tap a unit button while unitTarget is active
-    function tapUnit(symbol){
-      if(!unitTarget) return;
-      var correctUnit=NODES[unitTarget].unit;
-      setUnitTries(function(t){return t+1;});
-
-      if(symbol===correctUnit){
-        setUnitScore(function(s){return s+1;});
-        setUnits(function(u){var n={};for(var k in u)n[k]=u[k];n[unitTarget]=symbol;return n;});
-        flash(unitTarget,"correct");
-        setUnitTarget(null);
-      } else {
-        flash(unitTarget,"wrong");
-      }
-    }
-
-    // Render a single node in the tree
-    function renderNode(slotId){
-      var node=NODES[slotId];
-      var isFilled=placed[slotId];
-      var hasUnit=units[slotId];
-      var isUnitTarget=unitTarget===slotId;
-      var fb=slotFb[slotId];
-      var isEmpty=!isFilled;
-      var isClickable=isEmpty&&selected&&!unitTarget;
-
-      // Border color
-      var bColor=C.borderLight;
-      if(fb==="correct") bColor=C.sage;
-      else if(fb==="wrong") bColor=C.danger;
-      else if(isUnitTarget) bColor=C.accent;
-      else if(isFilled&&hasUnit) bColor=C.sage;
-      else if(isFilled) bColor=C.accent;
-
-      // Class for animation
-      var cls="";
-      if(fb==="correct") cls="pop-correct";
-      else if(fb==="wrong") cls="shake-wrong";
-      else if(isUnitTarget&&!fb) cls="glow-active";
-
-      var w=mb?105:150;
-
-      return h('div',{
-        key:slotId,
-        className:cls,
-        onClick:function(){if(isEmpty)tapSlot(slotId);},
-        style:{
-          background:isFilled?C.bgCard:"transparent",
-          border:"2px "+(isEmpty?"dashed":"solid")+" "+bColor,
-          borderRadius:12,
-          boxShadow:isFilled?"0 6px 16px rgba(58,51,54,0.06)":"none",
-          padding:mb?"10px 4px":"10px 8px",
-          width:w,
-          minHeight:mb?58:62,
-          textAlign:"center",
-          cursor:isClickable?"pointer":"default",
-          transition:"border-color 0.2s, box-shadow 0.2s",
-          display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"
-        }
-      },
-        // EMPTY SLOT
-        isEmpty&&h('div',{style:{fontFamily:ui,fontSize:mb?11:13,color:C.textDim,letterSpacing:"0.12em"}},"• • •"),
-
-        // FILLED — waiting for unit assignment. The buttons live in the card
-        // below the tree, not in here: the tree is scaled to fit, so in-node
-        // buttons shrink to ~17px on a narrow screen and become untappable.
-        isFilled&&isUnitTarget&&h('div',null,
-          h('div',{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:4}},
-            h('span',{style:{fontFamily:display,fontSize:mb?15:18,fontWeight:700,color:C.text}},node.abbr),
-            h('div',{style:{width:mb?20:24,height:mb?20:24,borderRadius:"50%",background:C.accentSoft,border:"2px dashed "+C.accent,display:"inline-flex",alignItems:"center",justifyContent:"center",fontFamily:ui,fontSize:mb?10:12,fontWeight:700,color:C.accent,flexShrink:0}},"?")),
-          h('div',{style:{fontFamily:ui,fontSize:mb?9:10,fontWeight:500,color:C.textDim,marginTop:2}},node.name)),
-
-        // FILLED — unit assigned (complete)
-        isFilled&&!isUnitTarget&&hasUnit&&h('div',null,
-          h('div',{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:4}},
-            h('span',{style:{fontFamily:display,fontSize:mb?15:18,fontWeight:700,color:C.text}},node.abbr),
-            h(UnitBadge,{unit:hasUnit,size:mb?20:24,fs:mb?10:12})),
-          h('div',{style:{fontFamily:ui,fontSize:mb?9:10,fontWeight:500,color:C.textDim,marginTop:2}},node.name)),
-
-        // FILLED — no unit yet, but not the current target (shouldn't happen in normal flow, but just in case)
-        isFilled&&!isUnitTarget&&!hasUnit&&h('div',null,
-          h('div',{style:{fontFamily:display,fontSize:mb?15:18,fontWeight:700,color:C.text}},node.abbr),
-          h('div',{style:{fontFamily:ui,fontSize:mb?9:10,fontWeight:500,color:C.textDim,marginTop:2}},node.name)));
-    }
-
-    // Instruction text
-    var instrText="";
-    var instrColor=C.accent;
-    if(allDone){
-      instrText="✓ Complete — you built the full FAIR model from memory.";
-      instrColor=C.sage;
-    } else if(unitTarget){
-      instrText="Now assign the correct unit ($, %, #) to "+NODES[unitTarget].abbr;
-      instrColor=C.accent;
-    } else if(selected){
-      instrText="Tap the correct position for "+NODES[selected].abbr+" ("+NODES[selected].name+")";
-      instrColor=C.text;
-    } else {
-      instrText="Select a component from the pool below";
-      instrColor=C.textDim;
-    }
-
-    return h('div',null,
-      // Score
-      h('div',{style:{display:"flex",gap:20,justifyContent:"center",marginBottom:10,flexWrap:"wrap"}},
-        h('div',{style:{fontFamily:ui,fontSize:12,fontWeight:500,color:C.textDim}},
-          "Components: ",h('span',{style:{color:C.sage,fontWeight:700}},placedCount),"/13",
-          compTries>0?(" \xB7 "+Math.round(compScore/compTries*100)+"%"):""),
-        h('div',{style:{fontFamily:ui,fontSize:12,fontWeight:500,color:C.textDim}},
-          "Units: ",h('span',{style:{color:C.sage,fontWeight:700}},unitCount),"/13",
-          unitTries>0?(" \xB7 "+Math.round(unitScore/unitTries*100)+"%"):"")),
-
-      // Instruction
-      h('div',{style:{textAlign:"center",marginBottom:18,fontFamily:ui,fontSize:mb?13:14,color:instrColor,fontWeight:600,minHeight:22}},instrText),
-
-      // Tree
-      h(ScaledTreeWrap,null,
-        h(TreeBranch,{nodeId:"risk",renderNode:renderNode,mb:mb})),
-
-      // Unit prompt — takes the pool's place while a unit is pending, so the
-      // next action is always full size and in the spot you are already looking at.
-      unitTarget&&h('div',{style:Object.assign({},cardStyle(mb,mb?"14px":"16px 20px"),{marginTop:24,borderLeft:"3px solid "+C.accent})},
-        h('div',{style:Object.assign({},eyebrow,{fontSize:10,color:C.accent,marginBottom:10})},"Assign the unit"),
-        h('div',{style:{textAlign:"center",fontFamily:ui,fontSize:mb?12:13,color:C.textDim,marginBottom:14}},
-          "What unit does ",
-          h('span',{style:{fontWeight:700,color:C.text}},NODES[unitTarget].abbr),
-          " — ",NODES[unitTarget].name," — carry?"),
-        h('div',{style:{display:"flex",gap:mb?14:18,justifyContent:"center",flexWrap:"wrap"}},
-          ["$","%","#"].map(function(u){
-            var uc=UNIT_MAP[u];
-            return h('div',{key:u,style:{display:"flex",flexDirection:"column",alignItems:"center",gap:6}},
-              h('button',{
-                onClick:function(){tapUnit(u);},
-                style:{
-                  width:mb?54:58,height:mb?54:58,borderRadius:"50%",
-                  background:uc.soft,border:"2px solid "+uc.color,
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  fontFamily:ui,fontSize:mb?21:23,fontWeight:700,color:uc.color,
-                  cursor:"pointer",transition:"transform 0.1s"
-                },
-                onMouseEnter:function(e){e.currentTarget.style.transform="scale(1.08)";},
-                onMouseLeave:function(e){e.currentTarget.style.transform="none";}
-              },u),
-              h('div',{style:{fontFamily:ui,fontSize:mb?10:11,fontWeight:500,color:C.textDim}},uc.label));
-          }))),
-
-      // Component pool
-      !allDone&&!unitTarget&&h('div',{style:Object.assign({},cardStyle(mb,mb?"14px":"16px 20px"),{marginTop:24})},
-        h('div',{style:Object.assign({},eyebrow,{fontSize:10,color:C.accent,marginBottom:10})},"Component Pool"),
-        pool.length>0
-          ? h('div',{style:{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}},
-              pool.map(function(id){
-                var node=NODES[id];
-                var isSel=selected===id;
-                return h('button',{
-                  key:id,
-                  onClick:function(){pickFromPool(id);},
-                  style:{
-                    background:isSel?C.accentSoft:C.bg,
-                    border:"1px solid "+(isSel?C.accent:C.borderLight),
-                    borderRadius:999,
-                    padding:mb?"7px 12px":"8px 14px",
-                    cursor:"pointer",
-                    fontFamily:ui,fontSize:mb?11:12,
-                    color:isSel?C.accent:C.text,
-                    fontWeight:isSel?700:600,
-                    transition:"all 0.15s",
-                    boxShadow:isSel?"0 0 12px "+C.accentGlow:"none"
-                  }
-                },
-                  h('span',{style:{fontWeight:700}},node.abbr),
-                  h('span',{style:{fontSize:mb?10:11,fontWeight:500,color:C.textDim,marginLeft:6}},node.name));
-              }))
-          : h('div',{style:{fontFamily:ui,fontSize:12,color:C.textDim,textAlign:"center",padding:8}},"All components placed. Finish assigning units.")),
-
-      // Done state
-      allDone&&h('div',{style:Object.assign({},cardStyle(mb,"20px"),{marginTop:24,textAlign:"center",borderLeft:"3px solid "+C.sage})},
-        h('div',{style:{fontSize:28,marginBottom:8}},"🎉"),
-        h('div',{style:{fontFamily:display,fontSize:mb?18:22,fontWeight:700,color:C.text,marginBottom:6}},"FAIR model complete"),
-        h('div',{style:{fontFamily:ui,fontSize:13,color:C.textDim,marginBottom:16}},
-          "Components: "+Math.round(compScore/compTries*100)+"% \xB7 Units: "+Math.round(unitScore/unitTries*100)+"%"),
-        h('button',{onClick:onReset,style:{background:C.accent,color:C.bg,border:"1px solid "+C.accent,borderRadius:999,padding:"10px 24px",fontFamily:ui,fontSize:12,fontWeight:600,letterSpacing:"0.02em",cursor:"pointer",transition:"background 0.12s ease, border-color 0.12s ease"},
-          onMouseEnter:function(e){e.currentTarget.style.background=C.text;e.currentTarget.style.borderColor=C.text;},
-          onMouseLeave:function(e){e.currentTarget.style.background=C.accent;e.currentTarget.style.borderColor=C.accent;}},"Practice Again")));
-  }
-
-  // ============================================================
-  // DEFINITIONS QUIZ — 22 items, always visible
-  // ============================================================
-  function DefinitionsQuiz(p){
-    var mb=p.mb;
-    var TOTAL=QUIZ_ITEMS.length;
-    var s2=useState(function(){return shuffle(ALL_QIDS.slice());}),defCards=s2[0],setDefCards=s2[1];
-    var s3=useState(function(){return shuffle(ALL_QIDS.slice());}),namePool=s3[0],setNamePool=s3[1];
-    var s4=useState({}),matched=s4[0],setMatched=s4[1];
-    var s5=useState(null),selId=s5[0],setSelId=s5[1];
-    var s6=useState({}),fb=s6[0],setFb=s6[1];
-    var s7=useState(0),correct=s7[0],setCorrect=s7[1];
-    var s8=useState(0),tries=s8[0],setTries=s8[1];
-
-    function startQuiz(){
-      setDefCards(shuffle(ALL_QIDS.slice()));
-      setNamePool(shuffle(ALL_QIDS.slice()));
-      setMatched({});setSelId(null);setFb({});
-      setCorrect(0);setTries(0);
-    }
-
-    function tapCard(qid){
-      if(!selId) return;
-      if(matched[qid]) return;
-      setTries(function(t){return t+1;});
-      if(selId===qid){
-        setCorrect(function(c){return c+1;});
-        setMatched(function(m){var n={};for(var k in m)n[k]=m[k];n[qid]=true;return n;});
-        setNamePool(function(pp){return pp.filter(function(id){return id!==selId;});});
-        setFb(function(f){var n={};for(var k in f)n[k]=f[k];n[qid]="correct";return n;});
-        setSelId(null);
-      } else {
-        setFb(function(f){var n={};for(var k in f)n[k]=f[k];n[qid]="wrong";return n;});
-        setTimeout(function(){setFb(function(f){var n={};for(var k in f)n[k]=f[k];delete n[qid];return n;});},400);
-      }
-    }
-
-    var matchCount=Object.keys(matched).length;
-    var allDone=matchCount>=TOTAL;
-
-    // Quiz is always active — no start screen
-    return h('div',null,
-      // Score
-      h('div',{style:{fontFamily:ui,fontSize:12,fontWeight:500,color:C.textDim,marginBottom:10,textAlign:"center"}},
-        "Matched: ",h('span',{style:{color:C.sage,fontWeight:700}},matchCount),"/",TOTAL,
-        tries>0?(" \xB7 "+Math.round(correct/tries*100)+"% accuracy"):""),
-
-      // Category legend
-      h('div',{style:{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap",marginBottom:14}},
-        [["component","Components"],["form_of_loss","Forms of Loss"],["poa_sub","PoA Sub-factors"]].map(function(pair){
-          return h('div',{key:pair[0],style:{display:"flex",alignItems:"center",gap:6}},
-            h('div',{style:{width:9,height:9,borderRadius:3,background:CAT_COLORS[pair[0]]}}),
-            h('span',{style:{fontFamily:ui,fontSize:11,fontWeight:500,color:C.textDim}},pair[1]));
-        })),
-
-      // Instruction
-      h('div',{style:{fontFamily:ui,fontSize:mb?13:14,color:selId?C.text:C.textDim,textAlign:"center",marginBottom:16,fontWeight:selId?600:500,minHeight:20}},
-        selId
-          ? "Tap the definition for: "+QMAP[selId].name
-          : "Select a name below, then tap its matching definition"),
-
-      // Definition cards
-      h('div',{style:{display:"grid",gridTemplateColumns:mb?"1fr":"1fr 1fr",gap:10}},
-        defCards.map(function(qid){
-          var item=QMAP[qid];
-          var isMatched=matched[qid];
-          var fbState=fb[qid];
-          var catColor=CAT_COLORS[item.cat];
-          var bColor=fbState==="correct"?C.sage:fbState==="wrong"?C.danger:isMatched?catColor:C.borderLight;
-          var cls=fbState==="correct"?"pop-correct":fbState==="wrong"?"shake-wrong":"";
-          return h('div',{
-            key:qid,
-            className:cls,
-            onClick:function(){tapCard(qid);},
-            style:{
-              background:isMatched?C.bgCard:"transparent",
-              border:"1px "+(isMatched?"solid":"dashed")+" "+bColor,
-              borderLeft:isMatched?("3px solid "+catColor):undefined,
-              borderRadius:12,padding:"12px 16px",
-              boxShadow:isMatched?"0 8px 20px rgba(58,51,54,0.05)":"none",
-              cursor:isMatched?"default":"pointer",
-              transition:"border-color 0.2s, box-shadow 0.2s"
-            }
-          },
-            isMatched&&h('div',{style:{display:"flex",alignItems:"center",gap:6,marginBottom:5,flexWrap:"wrap"}},
-              h('span',{style:{fontFamily:ui,fontSize:12,fontWeight:700,letterSpacing:"0.01em",color:catColor}},item.name),
-              item.unit&&h(UnitBadge,{unit:item.unit,size:18,fs:9})),
-            h('div',{style:{fontFamily:display,fontSize:mb?13:14,fontStyle:"italic",color:C.textMuted,lineHeight:1.55}},"“"+item.def+"”"));
-        })),
-
-      // Name pool
-      namePool.length>0&&h('div',{style:Object.assign({},cardStyle(mb,mb?"14px":"16px 20px"),{marginTop:16})},
-        h('div',{style:Object.assign({},eyebrow,{fontSize:10,color:C.accent,marginBottom:10})},"Tap a name to select it"),
-        h('div',{style:{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}},
-          namePool.map(function(qid){
-            var item=QMAP[qid];
-            var isSel=selId===qid;
-            var catColor=CAT_COLORS[item.cat];
-            return h('button',{
-              key:qid,
-              onClick:function(){setSelId(function(prev){return prev===qid?null:qid;});},
-              style:{
-                background:isSel?CAT_SOFT[item.cat]:C.bg,
-                border:"1px solid "+(isSel?catColor:C.borderLight),
-                borderRadius:999,padding:"6px 12px",cursor:"pointer",
-                fontFamily:ui,fontSize:mb?11:11,fontWeight:isSel?700:600,
-                color:isSel?catColor:C.text,
-                transition:"all 0.15s",
-                boxShadow:isSel?"0 0 12px "+C.accentGlow:"none"
-              }
-            },item.name);
-          }))),
-
-      // Done
-      allDone&&h('div',{style:{textAlign:"center",marginTop:20}},
-        h('div',{style:{fontSize:24,marginBottom:6}},"🎉"),
-        h('div',{style:{fontFamily:display,fontSize:mb?17:20,fontWeight:700,color:C.sage,marginBottom:12}},
-          "All 22 definitions matched \xB7 "+Math.round(correct/tries*100)+"% accuracy"),
-        h('button',{onClick:startQuiz,style:{background:"transparent",border:"1px solid "+C.accent,color:C.accent,borderRadius:999,padding:"9px 20px",fontFamily:ui,fontSize:12,fontWeight:600,letterSpacing:"0.02em",cursor:"pointer",transition:"background 0.12s ease, color 0.12s ease"},
-          onMouseEnter:function(e){e.currentTarget.style.background=C.accent;e.currentTarget.style.color=C.bg;},
-          onMouseLeave:function(e){e.currentTarget.style.background="transparent";e.currentTarget.style.color=C.accent;}},"Quiz Again")));
-  }
-
-  // ============================================================
-  // MAIN APP
-  // ============================================================
-  // The portfolio risk lab renders this page in an iframe and carries the lesson
-  // copy in its own header, so Act 1 is skipped when we are embedded.
-  var EMBEDDED=(function(){try{return window.self!==window.top;}catch(e){return true;}})();
+  // ------------------------------------------------------------------- app
+  const MODES=[
+    {id:"walk",title:"Walk the tree",blurb:"Every factor with its name, its unit and its definition. Load a benchmark to see which two get a published number."},
+    {id:"rebuild",title:"Rebuild it",blurb:"The tree comes back empty. Place all thirteen factors from a shuffled pool, then give each its unit."},
+    {id:"match",title:"Match definitions",blurb:"Twenty-two definitions, twenty-two names: the factors, the six forms of loss and the three sub-factors of Probability of Action."},
+  ];
 
   function App(){
-    var mb=useIsMobile();
-    var s1=useState("study"),mode=s1[0],setMode=s1[1];
-    var s2=useState(0),practiceKey=s2[0],setPracticeKey=s2[1];
-
-    // Read-only. The corpus is fetched to populate the worked example; the
-    // drill itself never depends on it.
-    var s3=useState([]),bmList=s3[0],setBmList=s3[1];
-    var s4=useState(null),bmError=s4[0],setBmError=s4[1];
-    var s5=useState(""),selBmId=s5[0],setSelBmId=s5[1];
-    useEffect(function(){
-      var live=true;
-      fetch(BENCHMARKS_URL)
-        .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
-        .then(function(d){if(live)setBmList(d.benchmarks||[]);})
-        .catch(function(e){if(live)setBmError(e.message);});
-      return function(){live=false;};
+    const [mode,setMode]=useState("walk");
+    const [round,setRound]=useState(0);      // bumps the key so a drill restarts fresh
+    const [showDefs,setShowDefs]=useState(true);
+    const [list,setList]=useState([]);
+    const [err,setErr]=useState(null);
+    const [sel,setSel]=useState("");
+    const [prog,setProg]=useState({});
+    useEffect(()=>{
+      let live=true;
+      fetch(BENCHMARKS_URL).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+        .then(d=>{if(live)setList(Array.isArray(d.benchmarks)?d.benchmarks:[]);})
+        .catch(e=>{if(live)setErr(e.message);});
+      return()=>{live=false;};
     },[]);
-    var selBm=bmList.filter(function(b){return b.id===selBmId;})[0]||null;
+    function choose(id){setMode(id);setRound(r=>r+1);setProg({});}
 
-    function startPractice(){setMode("practice");setPracticeKey(function(k){return k+1;});}
+    let progress=null;
+    if(mode==="walk")progress=[["13","factors"],["6 + 3","forms of loss, PoA sub-factors"]];
+    else if(mode==="rebuild")progress=[[(prog.placedN||0)+"/13","placed · "+(prog.tries?pctOf(prog.tries.placeOk,prog.tries.place):"—")+" right"],[(prog.unitsN||0)+"/13","units · "+(prog.tries?pctOf(prog.tries.unitOk,prog.tries.unit):"—")+" right"]];
+    else progress=[[(prog.matchedN||0)+"/22","matched"],[prog.tries?pctOf(prog.tries.ok,prog.tries.n):"—","first-try accuracy"]];
 
-    var pd=mb?16:24;
-    var prose={maxWidth:"none",fontFamily:ui,fontSize:mb?15:16,lineHeight:1.75,color:C.textMuted};
+    const panelTitle=MODES.find(m=>m.id===mode).title;
 
-    function modeBtn(label,isOn,onClick){
-      return h('button',{onClick:onClick,style:{
-        background:isOn?C.accent:"transparent",color:isOn?C.bg:C.accent,
-        border:"1px solid "+C.accent,borderRadius:999,padding:mb?"9px 18px":"10px 22px",
-        fontFamily:ui,fontSize:12,fontWeight:600,letterSpacing:"0.02em",cursor:"pointer",
-        transition:"background 0.12s ease, color 0.12s ease"
-      }},label);
-    }
-
-    // 100vh inside the iframe is the frame's own height, which pins the page to
-    // whatever height the parent last set and leaves dead space under the content.
-    return h('div',{style:{minHeight:EMBEDDED?0:"100vh",background:C.bg,color:C.text}},
-
-      // ACT 1
-      !EMBEDDED&&h('div',{style:{maxWidth:1400,margin:"0 auto",padding:(mb?40:64)+"px "+pd+"px 0"}},
-        h(SectionLabel,{label:"The Lesson",color:C.amber}),
-        h('h1',{style:{fontFamily:display,fontSize:mb?34:52,fontWeight:700,lineHeight:1.05,letterSpacing:"-0.02em",marginBottom:24,maxWidth:760,color:C.text}},
-          "The FAIR Model, ",h('em',{style:{fontStyle:"italic",color:C.accent}},"from Memory")),
-        h('div',{style:prose},
-          h('p',{style:{marginBottom:16}},"The FAIR model decomposes risk into its fundamental components. For certification you need this taxonomy cold: every factor, where it sits in the tree, and what unit it carries. Dollars ($) for financial amounts, percent (%) for probabilities, and count (#) for frequencies."),
-          h('p',null,"Study the tree below, then switch to practice mode and rebuild it from memory — place each component, then assign its unit. The definitions quiz underneath is a separate exercise covering all 22 testable items: the 13 model components, the 6 forms of loss, and the 3 Probability of Action sub-factors."))),
-
-      // ACT 2
-      h('div',{style:{maxWidth:1400,margin:"0 auto",padding:(mb?32:48)+"px "+pd+"px 0"}},
-        h(SectionLabel,{label:"The Tool"}),
-
-        h('div',{style:cardStyle(mb,mb?"16px 12px":"24px")},
-          // Mode toggle
-          h('div',{style:{display:"flex",gap:10,marginBottom:18,justifyContent:"center"}},
-            modeBtn("📖 Study",mode==="study",function(){setMode("study");}),
-            modeBtn("🎯 Practice",mode==="practice",startPractice)),
-
-          // Unit legend
-          h('div',{style:{display:"flex",gap:18,justifyContent:"center",marginBottom:22,flexWrap:"wrap"}},
-            [["$","Dollars"],["%","Probability / Percentile"],["#","Frequency (count)"]].map(function(pair){
-              return h('div',{key:pair[0],style:{display:"flex",alignItems:"center",gap:7}},
-                h(UnitBadge,{unit:pair[0],size:22,fs:11}),
-                h('span',{style:{fontFamily:ui,fontSize:11,fontWeight:500,color:C.textDim}},pair[1]));
-            })),
-
-          // CONTENT
-          mode==="study"
-            ? h('div',null,
-                h(StudyTree,{mb:mb,benchmark:selBm}),
-                h(WorkedExample,{mb:mb,list:bmList,error:bmError,
-                  selected:selBmId,onSelect:setSelBmId}))
-            : h(PracticeMode,{key:practiceKey,mb:mb,onReset:startPractice}))),
-
-      // ACT 3 — DEFINITIONS QUIZ
-      h('div',{style:{maxWidth:1400,margin:"0 auto",padding:(mb?32:48)+"px "+pd+"px 0"}},
-        h(SectionLabel,{label:"Definitions Quiz",color:C.plum}),
-        h(DefinitionsQuiz,{mb:mb})),
-
-      // ACT 4
-      h('div',{style:{maxWidth:1400,margin:"0 auto",padding:(mb?32:48)+"px "+pd+"px 0"}},
-        h(SectionLabel,{label:"The Takeaway",color:C.sage}),
-        h('div',{style:prose},
-          h('p',{style:{marginBottom:16}},"Every factor in the FAIR tree is a lever you can measure, estimate, and act on. Knowing where each one sits, what it measures, and how it connects to its neighbours is what turns the model from a diagram into something you can actually run an assessment with."),
-          h('p',null,"Practice until you can build the whole tree from memory without a mistake. That is the point at which the taxonomy stops being something you look up and starts being something you think in.")),
-
-        h('div',{style:{height:mb?72:140}})));
+    return el('div',null,
+      !EMBEDDED&&el('header',{className:"wrap masthead"},
+        el('div',{className:"kicker"},"RootCaws · Risk lab"),
+        el('h1',null,"FAIR Taxonomy ",el('em',null,"Drill")),
+        el('p',{className:"deck"},"Thirteen factors, three units, one tree. Walk it with the labels on, rebuild it with them off, and finish by matching every definition to its name. The point is not the diagram. It is being able to think in it without looking it up.")),
+      el('div',{className:"wrap bench"},
+        el('aside',{className:"card controls","aria-label":"Drill controls"},
+          el('div',{className:"label"},"Mode"),
+          el('div',{className:"modes",role:"tablist"},MODES.map(m=>el('button',{key:m.id,type:"button",role:"tab","aria-selected":mode===m.id,className:mode===m.id?"on":"",onClick:()=>choose(m.id)},el('b',null,m.title),el('span',null,m.blurb)))),
+          el('div',{className:"rule"}),
+          el('div',{className:"label",style:{marginBottom:8}},mode==="walk"?"On the board":"Progress"),
+          el('div',{className:"progress"},progress.map((p,i)=>el('div',{key:i,className:"cell"},el('div',{className:"v"},p[0]),el('div',{className:"k"},p[1])))),
+          el('div',{className:"rule"}),
+          el('div',{className:"label",style:{marginBottom:8}},"Units"),
+          el('div',{className:"legend"},
+            el('div',null,el(UnitBadge,{unit:"$"}),"money: a loss, in currency"),
+            el('div',null,el(UnitBadge,{unit:"%"}),"probability, or a share of events"),
+            el('div',null,el(UnitBadge,{unit:"#"}),"frequency: a count per period")),
+          el('div',{className:"rule"}),
+          el('div',{style:{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",justifyContent:"space-between"}},
+            mode==="walk"
+              ?el('button',{type:"button",className:"btn ghost small",onClick:()=>setShowDefs(s=>!s)},showDefs?"Hide definitions":"Show definitions")
+              :el('button',{type:"button",className:"btn ghost small",onClick:()=>choose(mode)},"Start over"))),
+        el('section',{"aria-label":"Drill"},
+          el('div',{className:"card panel"},
+            el('div',{className:"panel-head"},el('h2',null,panelTitle)),
+            el('p',{className:"lede"},MODES.find(m=>m.id===mode).blurb),
+            mode==="walk"&&el(WalkMode,{list,err,sel,setSel,showDefs}),
+            mode==="rebuild"&&el(RebuildMode,{key:"r"+round,report:setProg}),
+            mode==="match"&&el(MatchMode,{key:"m"+round,report:setProg})))),
+      el(Notes));
   }
 
-  ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+  ReactDOM.createRoot(document.getElementById('root')).render(el(App));
   </script>
 </body>
 </html>

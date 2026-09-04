@@ -1,64 +1,64 @@
-# FAIR Model Study Tool
+# FAIR Taxonomy Drill
 
-An interactive drill for the FAIR risk taxonomy: study the decomposition tree, then rebuild it
-from memory — place all 13 components in the right positions, assign the right unit to each one,
-and match all 22 testable definitions.
+A study drill for the FAIR risk taxonomy in three modes: walk the factor tree with names, units and
+definitions showing; rebuild it from a shuffled pool with them hidden; and match all twenty-two
+definitions to their names.
 
 **Live:** https://rootcawsllc.github.io/fair-model-study/
 
-![The FAIR decomposition tree in study mode with a real UK financial-services data-breach scenario loaded. Loss Event Frequency and Loss Magnitude are highlighted in amber carrying 0.43 / 0.65 / 0.69 events per year and £10K / £5.7M / £11.2M per event; the other eleven nodes from Threat Event Frequency down to Secondary Loss Magnitude remain empty. Below, a panel reading "2 of 13 nodes filled" explains that a published loss study reports how often the event happens and how much it costs, and nothing else](preview.png)
+![Walk mode with a UK financial-services data-breach benchmark loaded. The thirteen factors are laid out as an indented outline from Risk down to Secondary Loss Magnitude, each with its abbreviation, name, unit badge and a one-line definition. Loss Event Frequency and Loss Magnitude carry an amber "sourced" tag with the shard's low, likely and high in events per year and pounds per event; the other eleven rows carry no figures. A worked-example panel beneath explains that two of thirteen factors have a published number, and lists the sources behind them](preview.png)
 
 ## What it does
 
-- **Study mode** — the complete FAIR decomposition tree, from Risk down to Secondary Loss
-  Magnitude, with the unit each factor carries: dollars (`$`), probability (`%`), or frequency (`#`).
-- **Practice mode** — the tree comes back empty. Pick a component from the shuffled pool, tap where
-  it belongs, then assign its unit before moving on. Placement accuracy and unit accuracy are scored
-  separately, so you can see which half you actually know.
-- **Definitions quiz** — 22 items in one pool: the 13 model components, the 6 forms of loss, and
-  the 3 Probability of Action sub-factors. Match each name to its definition; colour-coded by category.
+- **Walk the tree.** All thirteen factors as an outline, each with the unit it carries (money,
+  probability, or a frequency) and a plain-language definition that can be hidden. Load a
+  source-backed scenario onto it and exactly two factors fill in, because a published loss study
+  reports how often the event happens and what it costs, and nothing beneath. The eleven empty
+  factors are not missing data; they are where the analysis has to enter.
+- **Rebuild it.** The outline empties. Pick a factor from the shuffled pool, tap the slot where it
+  belongs, then answer its unit in the row where it landed. Placement and unit accuracy are
+  scored separately.
+- **Match definitions.** Twenty-two names on one side and twenty-two definitions on the other:
+  the thirteen factors, the six forms of loss, and the three sub-factors of Probability of
+  Action. Categories are revealed as items match, so they cannot be used as hints.
 
-- **Worked example** — load a real, source-backed scenario onto the study tree and watch how
-  little of it fills in. A published loss study reports an annualised event frequency and a
-  per-event loss: in FAIR terms, Loss Event Frequency and Loss Magnitude, and nothing else. Two of
-  thirteen nodes. Nobody measures contact frequency or resistance strength across a population, so
-  the eleven empty nodes are not missing data — they are the analysis, which is the reason the
-  decomposition is worth knowing cold. Each filled node shows the sources behind it, with their
-  stated limitations.
-
-The tree scales itself to fit the viewport, so the full 13-node model stays readable on a phone.
+The definitions are written for the drill in plain language. They follow the FAIR taxonomy but
+are not the standard's own text; for the authoritative wording go to the published standard.
 
 ## Build
 
-Single self-contained `index.html` — React 18 via UMD CDN, no build step, no dependencies.
-Styled to match the palette and type system of the RootCaws design system: powder
-rose surfaces, warm ink, rose accent, Fraunces for display and Inter for UI.
+Single self-contained `index.html`: React 18 via UMD CDN, no build step, no dependencies. Styled in
+the RootCaws palette: powder-rose surfaces, warm ink, rose accent, Fraunces for display type and
+Inter for everything else.
 
 ## Running locally
+
+Serve the directory with any static server so the relative fetch of `risk-benchmarks.json`
+works, for example:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then open http://localhost:8000. The worked example fetches the shard corpus over HTTPS at load;
-if that is unreachable the panel says so and both drills work exactly as before, since nothing in
-the study or practice modes depends on it.
+Then open http://localhost:8000. If the benchmarks file is unreachable the worked example says
+so; the drills do not depend on it.
 
 ## Status
 
-Built as a training exercise — a study aid for learning the FAIR taxonomy, and for learning how
+Built as a training exercise: a study aid for learning the FAIR taxonomy, and for learning how
 this kind of interaction is put together.
 
 The taxonomy follows the FAIR Model Standard Artifact Version 3.0 (January 2025) published by the
 FAIR Institute. This is a study aid, not a substitute for official FAIR training material.
 The FAIR Model™ is a trademark of the FAIR Institute.
 
-Worked-example data comes from [risk-benchmarks](https://github.com/RootCawsLLC/risk-benchmarks), which
-derives it from [RiskShard](https://github.com/raviaxo/RiskShard) by
-[raviaxo](https://github.com/raviaxo), AGPL-3.0. The mapping of a shard onto FAIR nodes is this
-project's own, and it is deliberately shallow: the shard's frequency triangle is Loss Event
-Frequency and its impact triangle is Loss Magnitude, with no attempt to derive the factors beneath
-them, because nothing in the source supports that derivation.
+Worked-example data comes from [risk-benchmarks](https://github.com/RootCawsLLC/risk-benchmarks),
+which derives it from [RiskShard](https://github.com/raviaxo/RiskShard) by
+[raviaxo](https://github.com/raviaxo), AGPL-3.0. The mapping of a shard onto FAIR factors is this
+project's own, and it is deliberately shallow: the shard's frequency range is Loss Event
+Frequency and its impact range is Loss Magnitude, with no attempt to derive the factors beneath
+them, because nothing in the source supports that derivation. See
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## License
 
