@@ -1,22 +1,23 @@
 # FAIR Taxonomy Drill
 
-A study drill for the FAIR risk taxonomy in three modes: walk the factor tree with names, units and
-definitions showing; rebuild it from a shuffled pool with them hidden; and match all twenty-two
-definitions to their names.
+A study drill for the FAIR risk taxonomy in three modes: walk the factor tree as a branching diagram
+with names and units showing and every definition a tap away; rebuild it from a shuffled pool with
+them hidden; and match all twenty-two definitions to their names.
 
 **Live:** https://rootcawsllc.github.io/fair-model-study/
 
-![Walk mode with a UK financial-services data-breach benchmark loaded. The thirteen factors are laid out as an indented outline from Risk down to Secondary Loss Magnitude, each with its abbreviation, name, unit badge and a one-line definition. Loss Event Frequency and Loss Magnitude carry an amber "sourced" tag with the shard's low, likely and high in events per year and pounds per event; the other eleven rows carry no figures. A worked-example panel beneath explains that two of thirteen factors have a published number, and lists the sources behind them](preview.png)
+![Walk mode with a UK financial-services data-breach benchmark loaded. The thirteen factors are drawn as a branching tree, Risk at the top, its two children below it and so on down to the six leaves, each box carrying an abbreviation, a name and a unit badge. Loss Event Frequency and Loss Magnitude are tinted amber with a "sourced" tag. A detail strip under the diagram shows the selected factor's definition, its sourced range in events per year, and what it feeds and is built from. A worked-example panel beneath explains that two of thirteen factors have a published number, and lists the sources behind them](preview.png)
 
 ## What it does
 
-- **Walk the tree.** All thirteen factors as an outline, each with the unit it carries (money,
-  probability, or a frequency) and a plain-language definition that can be hidden. Load a
-  source-backed scenario onto it and exactly two factors fill in, because a published loss study
+- **Walk the tree.** All thirteen factors as a branching diagram, each with the unit it carries
+  (money, probability, or a frequency). Tap a factor for its plain-language definition, what it
+  feeds and what it is built from; an outline view lists every definition at once and takes over
+  on narrow screens. Load a source-backed scenario onto it and exactly two factors fill in, because a published loss study
   reports how often the event happens and what it costs, and nothing beneath. The eleven empty
   factors are not missing data; they are where the analysis has to enter.
-- **Rebuild it.** The outline empties. Pick a factor from the shuffled pool, tap the slot where it
-  belongs, then answer its unit in the row where it landed. Placement and unit accuracy are
+- **Rebuild it.** The tree empties. Pick a factor from the shuffled pool, tap the slot where it
+  belongs, then answer its unit. Placement and unit accuracy are
   scored separately.
 - **Match definitions.** Twenty-two names on one side and twenty-two definitions on the other:
   the thirteen factors, the six forms of loss, and the three sub-factors of Probability of
