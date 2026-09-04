@@ -205,6 +205,23 @@
     .note h3{font-family:var(--display);font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
     .note p{font-size:14px;color:var(--ink-2);line-height:1.65}
     .notes.embedded{padding-top:8px;padding-bottom:24px}
+
+    .guide{padding:28px 0 8px}
+    .guide h2{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:28px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--soft-line)}
+    .guide h2:first-of-type{margin-top:0}
+    .guide-toc{display:flex;flex-wrap:wrap;gap:.35rem .9rem;margin:0 0 18px;font-size:13px}
+    .guide-toc a{color:var(--rose)}
+    .guide-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width:699px){.guide-pair{grid-template-columns:1fr}}
+    .guide-box{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+    .guide-box.use{border-left:3px solid var(--sage)}
+    .guide-box.dont{border-left:3px solid var(--rose)}
+    .guide-box h3{font-family:var(--display);font-weight:600;font-size:18px;margin:0 0 8px;letter-spacing:-.01em}
+    .guide-box ul,.guide ol{margin:0;padding-left:1.15rem}
+    .guide li{font-size:14px;color:var(--ink-2);line-height:1.65;margin:.4rem 0}
+    .guide li b{color:var(--ink);font-weight:600}
+    .guide-close{font-size:14px;color:var(--ink-2);line-height:1.65;margin:10px 0 0}
+
     @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.row.good,.row.bad,.defcard.good,.defcard.bad,.gnode.bad{animation:none}}
   </style>
 </head>
@@ -575,6 +592,38 @@
         el('p',null,"Rebuild until you stop hesitating, then use the tree the way it is meant to be used: decompose a scenario only as far down as you have something to say. Estimating Loss Event Frequency directly is legitimate when you have incident data; splitting it into contact, action and susceptibility is for when you do not.")));
   }
 
+  function Guide(){
+    return el('section',{className:"wrap guide","aria-label":"How to use this"},
+      el('nav',{className:"guide-toc","aria-label":"On this page"},
+        el('a',{href:"#when"},"When to use it"),
+        el('a',{href:"#how"},"How to use it"),
+        el('a',{href:"#org"},"Take it into your org")),
+      el('h2',{id:"when"},"When and where to use it"),
+      el('div',{className:"guide-pair"},
+        el('div',{className:"guide-box use"},el('h3',null,"Use it when"),
+          el('ul',null,
+            el('li',null,"You are standing up FAIR and analysts cannot yet name the thirteen factors, with their units, without looking them up."),
+            el('li',null,"Published loss data has been dropped into a model and people think the tree is filled."),
+            el('li',null,"A workshop needs a shared vocabulary before anyone estimates anything."),
+            el('li',null,"You are training and want a pass or fail on the taxonomy, not a slide."))),
+        el('div',{className:"guide-box dont"},el('h3',null,"Do not use it when"),
+          el('ul',null,
+            el('li',null,"You need a loss number. This is a drill, not an engine."),
+            el('li',null,"Rebuilding the tree is being treated as a completed analysis. Memory is the entrance, not the work.")))),
+      el('h2',{id:"how"},"How to use it"),
+      el('ol',null,
+        el('li',null,el('b',null,"Walk. "),"All thirteen factors as a tree, each with its unit. Tap one for the definition, or switch to the outline. Load a benchmark and exactly two factors light up with cited ranges; the other eleven stay empty, which is the point."),
+        el('li',null,el('b',null,"Rebuild. "),"The tree empties. Place every factor from a shuffled pool, then answer its unit. Placement and units are scored separately, so you can see which half you know."),
+        el('li',null,el('b',null,"Match. "),"Twenty-two definitions: the thirteen factors, the six forms of loss, and the three sub-factors of Probability of Action.")),
+      el('h2',{id:"org"},"Take it into your organisation"),
+      el('ol',null,
+        el('li',null,el('b',null,"Drill until placement and units stop being the debate. "),"A workshop that still argues about what LEF means is not ready to estimate it."),
+        el('li',null,el('b',null,"For each live scenario, write which factors you will estimate and which you will take from a citation. "),"The two filled nodes from a published study are how often and how much. Everything beneath is yours."),
+        el('li',null,el('b',null,"Stop decomposing when you have nothing to say. "),"Estimating Loss Event Frequency directly is legitimate when you have incident data. Splitting it into contact, action and susceptibility is for when you do not."),
+        el('li',null,el('b',null,"Put the tree on the wall of the workshop, not in a slide that nobody uses. "),"The drill is how you earn the right to skip the slide.")),
+      el('p',{className:"guide-close"},"The notes below are the honest limits. Read them before you treat a filled node as an estimate."));
+  }
+
   // ------------------------------------------------------------------- app
   const MODES=[
     {id:"walk",title:"Walk the tree",blurb:"Every factor with its name and unit. Tap one for its definition, or switch to the outline to read them all. Load a benchmark to see which two get a published number."},
@@ -619,6 +668,7 @@
         el('div',{className:"kicker"},"RootCaws · Risk lab"),
         el('h1',null,"FAIR Taxonomy ",el('em',null,"Drill")),
         el('p',{className:"deck"},"Thirteen factors, three units, one tree. Walk it with the labels on, rebuild it with them off, and finish by matching every definition to its name. The point is not the diagram. It is being able to think in it without looking it up.")),
+      !EMBEDDED&&el(Guide),
       el('div',{className:"wrap bench"},
         el('aside',{className:"card controls","aria-label":"Drill controls"},
           el('div',{className:"label"},"Mode"),

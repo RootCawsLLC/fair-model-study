@@ -4,7 +4,7 @@ A study drill for the FAIR risk taxonomy in three modes: walk the factor tree as
 with names and units showing and every definition a tap away; rebuild it from a shuffled pool with
 them hidden; and match all twenty-two definitions to their names.
 
-**Live:** https://rootcawsllc.github.io/fair-model-study/
+**Live:** https://rootcawsllc.github.io/fair-model-study/ — when to use it, how to use it, and how to take the pattern into an organisation.
 
 ![Walk mode with a UK financial-services data-breach benchmark loaded. The thirteen factors are drawn as a branching tree, Risk at the top, its two children below it and so on down to the six leaves, each box carrying an abbreviation, a name and a unit badge. Loss Event Frequency and Loss Magnitude are tinted amber with a "sourced" tag. A detail strip under the diagram shows the selected factor's definition, its sourced range in events per year, and what it feeds and is built from. A worked-example panel beneath explains that two of thirteen factors have a published number, and lists the sources behind them](preview.png)
 
