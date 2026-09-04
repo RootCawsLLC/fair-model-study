@@ -47,13 +47,13 @@
     .kicker{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--rose)}
     .masthead h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,4.6vw,56px);line-height:1.02;letter-spacing:-.02em;margin:10px 0 14px}
     .masthead h1 em{font-style:italic;color:var(--rose)}
-    .deck{font-size:17px;color:var(--ink-2);max-width:64ch;line-height:1.6}
+    .deck{font-size:17px;color:var(--ink-2);line-height:1.6}
 
     .bench{display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr);gap:20px;align-items:start;padding-top:24px}
-    @media (max-width:899px){.bench{grid-template-columns:1fr}}
+    @media (max-width:1099px){.bench{grid-template-columns:1fr}}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
     .controls{position:sticky;top:16px;padding:18px}
-    @media (max-width:899px){.controls{position:static}}
+    @media (max-width:1099px){.controls{position:static}}
     .label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
     .rule{height:1px;background:var(--soft-line);margin:16px 0}
     .modes{display:grid;gap:6px;margin-top:8px}
@@ -62,6 +62,10 @@
     .modes button.on{background:var(--rose-soft);border-color:var(--rose)}
     .modes b{display:block;font-size:13.5px}
     .modes span{display:block;font-size:12px;color:var(--muted);line-height:1.45;margin-top:2px}
+    .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
+    .seg button{border:0;background:transparent;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+    .seg button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(58,51,54,.12)}
+    .seg button[disabled]{opacity:.5;cursor:default}
     .progress{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .progress .cell{padding:10px 12px;border-radius:10px;background:var(--paper)}
     .progress .v{font-family:var(--display);font-weight:600;font-size:22px;line-height:1;font-variant-numeric:tabular-nums}
@@ -80,16 +84,67 @@
     .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
     .panel-head h2{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:-.01em}
     .lede{font-size:13.5px;color:var(--ink-2);line-height:1.55;margin-bottom:12px}
-    .status{font-size:13.5px;font-weight:600;color:var(--ink-2);min-height:22px;margin-bottom:10px}
+    .status{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13.5px;font-weight:600;color:var(--ink-2);min-height:30px;margin-bottom:10px}
     .status.good{color:var(--sage)}
     .status.hot{color:var(--rose)}
 
+    /* unit badges, HTML flavour */
     .unit{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;border:2px solid;flex-shrink:0}
     .unit.money{color:var(--sage);border-color:var(--sage);background:var(--sage-soft)}
     .unit.prob{color:var(--plum);border-color:var(--plum);background:var(--plum-soft)}
     .unit.freq{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
     .unit.ask{color:var(--rose);border-color:var(--rose);background:var(--rose-soft);border-style:dashed}
+    .ask-units{display:inline-flex;gap:6px;align-items:center}
+    .ask-units button{width:32px;height:32px;border-radius:50%;border:2px solid;font-weight:700;font-size:13px;cursor:pointer;background:var(--panel);transition:transform .1s}
+    .ask-units button.money{color:var(--sage);border-color:var(--sage)}
+    .ask-units button.prob{color:var(--plum);border-color:var(--plum)}
+    .ask-units button.freq{color:var(--amber);border-color:var(--amber)}
+    .ask-units button:hover{transform:scale(1.08)}
 
+    /* the diagram */
+    .diagram{display:block;width:100%;height:auto;overflow:visible;margin:6px 0 4px}
+    .diagram text{font-family:var(--ui);pointer-events:none}
+    .diagram .edge{fill:none;stroke:var(--line);stroke-width:2}
+    .gnode rect.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5;transition:stroke .15s,fill .15s}
+    .gnode text.abbr{font-family:var(--display);font-weight:700;font-size:17px;fill:var(--ink)}
+    .gnode text.nm{font-size:10px;fill:var(--ink-2)}
+    .diagram.tight .gnode text.abbr{font-size:14px}
+    .gnode text.dots{font-size:13px;letter-spacing:.2em;fill:var(--muted)}
+    .gnode.clickable{cursor:pointer}
+    .gnode.clickable:hover rect.box{stroke:var(--rose)}
+    .gnode.sel rect.box{stroke:var(--rose);stroke-width:2;fill:var(--rose-soft)}
+    .gnode.sourced rect.box{stroke:var(--amber);fill:var(--amber-soft)}
+    .gnode.slot rect.box{fill:transparent;stroke-dasharray:5 4}
+    .gnode.armed rect.box{stroke:var(--rose)}
+    .gnode.armed:hover rect.box{fill:var(--rose-soft)}
+    .gnode.placed rect.box{stroke:var(--rose)}
+    .gnode.done rect.box{stroke:var(--sage)}
+    .gnode.good rect.box{stroke:var(--sage);fill:var(--sage-soft)}
+    .gnode.bad{animation:shake .35s ease-out;transform-box:fill-box}
+    .gnode.bad rect.box{stroke:var(--brick);fill:var(--brick-soft)}
+    .ubadge circle{stroke-width:2}
+    .ubadge text{font-size:11px;font-weight:700}
+    .ubadge.money circle{fill:var(--sage-soft);stroke:var(--sage)} .ubadge.money text{fill:var(--sage)}
+    .ubadge.prob circle{fill:var(--plum-soft);stroke:var(--plum)} .ubadge.prob text{fill:var(--plum)}
+    .ubadge.freq circle{fill:var(--amber-soft);stroke:var(--amber)} .ubadge.freq text{fill:var(--amber)}
+    .ubadge.ask circle{fill:var(--rose-soft);stroke:var(--rose);stroke-dasharray:3 2} .ubadge.ask text{fill:var(--rose)}
+    .gnode text.tag{font-size:9px;font-weight:700;letter-spacing:.08em;fill:var(--amber)}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+    @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+    /* detail strip under the diagram */
+    .detail{margin-top:8px;padding:14px 16px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+    .detail .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+    .detail .abbr{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em}
+    .detail .nm{font-size:14px;color:var(--ink-2)}
+    .detail .aka{font-size:12px;color:var(--muted)}
+    .detail .ulab{font-size:11.5px;color:var(--muted);margin-left:auto}
+    .detail p{font-size:14px;color:var(--ink-2);line-height:1.6}
+    .detail .src{margin-top:8px;font-size:12.5px;color:var(--amber);font-weight:600}
+    .detail .kids{margin-top:8px;font-size:12px;color:var(--muted)}
+    .detail .kids b{color:var(--ink-2);font-weight:600}
+
+    /* the outline view */
     .tree,.tree ul{list-style:none}
     .tree ul{margin-left:14px;padding-left:18px;border-left:2px solid var(--line)}
     .tree li{position:relative;padding:4px 0}
@@ -108,15 +163,8 @@
     .row.done{border-color:var(--sage)}
     .row.good{animation:pop .35s ease-out;border-color:var(--sage)}
     .row.bad{animation:shake .35s ease-out;border-color:var(--brick)}
-    @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
-    @keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
-    .ask-units{display:inline-flex;gap:6px;align-items:center;margin-left:auto}
-    .ask-units span{font-size:11.5px;color:var(--rose);font-weight:600;margin-right:2px}
-    .ask-units button{width:30px;height:30px;border-radius:50%;border:2px solid;font-weight:700;font-size:13px;cursor:pointer;background:var(--panel)}
-    .ask-units button.money{color:var(--sage);border-color:var(--sage)}
-    .ask-units button.prob{color:var(--plum);border-color:var(--plum)}
-    .ask-units button.freq{color:var(--amber);border-color:var(--amber)}
-    .ask-units button:hover{transform:scale(1.08)}
+    .row .ask-units{margin-left:auto}
+    .row .ask-units span{font-size:11.5px;color:var(--rose);font-weight:600;margin-right:2px}
 
     .pool{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-radius:10px;background:var(--paper);margin-bottom:14px}
     .chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .12s}
@@ -151,11 +199,13 @@
     .finish span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:2px}
 
     .notes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-top:28px;padding-bottom:80px}
+    .notes::before{content:"Notes";grid-column:1/-1;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--soft-line)}
+    .note{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px}
     @media (max-width:899px){.notes{grid-template-columns:1fr}}
     .note h3{font-family:var(--display);font-weight:600;font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
     .note p{font-size:14px;color:var(--ink-2);line-height:1.65}
     .notes.embedded{padding-top:8px}
-    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.row.good,.row.bad,.defcard.good,.defcard.bad{animation:none}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.row.good,.row.bad,.defcard.good,.defcard.bad,.gnode.bad{animation:none}}
   </style>
 </head>
 <body>
@@ -165,7 +215,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script>
   'use strict';
-  const {useState,useEffect,useMemo,createElement:el}=React;
+  const {useState,useEffect,useMemo,useRef,createElement:el}=React;
 
   // The portfolio risk lab renders this page inside an iframe and supplies its
   // own heading, so the masthead is dropped when we are not the top window.
@@ -206,6 +256,7 @@
   };
   const ROOT="risk";
   const NODE_IDS=Object.keys(NODES);
+  const PARENT={};NODE_IDS.forEach(id=>NODES[id].kids.forEach(k=>{PARENT[k]=id;}));
   const FORMS=[
     ["Productivity Loss","Output the organisation fails to deliver because the event disrupted its work."],
     ["Response Costs","What it costs to deal with the event: investigation, containment, recovery, notification."],
@@ -246,13 +297,101 @@
   }
   function pctOf(a,b){return b>0?Math.round(a/b*100)+"%":"—";}
 
+  // Tidy layout: leaves get one column each in tree order, every parent sits
+  // over the middle of its children. Leaf columns, left to right: CF, PoA,
+  // TCap, RS, PL, SLEF, SLM.
+  const LAYOUT=(()=>{
+    const pos={};let col=0,depth=0;
+    function place(id,d){
+      depth=Math.max(depth,d);
+      const n=NODES[id];
+      if(!n.kids.length){pos[id]={x:col++,d};return pos[id].x;}
+      const xs=n.kids.map(k=>place(k,d+1));
+      pos[id]={x:(xs[0]+xs[xs.length-1])/2,d};
+      return pos[id].x;
+    }
+    place(ROOT,0);
+    return {pos,cols:col,levels:depth+1};
+  })();
+
+  // ----------------------------------------------------------------- hooks
+  function useWidth(ref,fallback){
+    const [w,setW]=useState(fallback||800);
+    useEffect(()=>{
+      const node=ref.current;if(!node)return;
+      const read=()=>{const r=node.getBoundingClientRect();if(r.width>0)setW(r.width);};
+      read();const raf=requestAnimationFrame(read);
+      const ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(read):null;
+      if(ro)ro.observe(node);
+      window.addEventListener("resize",read);
+      return()=>{cancelAnimationFrame(raf);window.removeEventListener("resize",read);if(ro)ro.disconnect();};
+    },[ref]);
+    return w;
+  }
+
   // ---------------------------------------------------------------- pieces
   function UnitBadge({unit,ask}){
     if(ask)return el('span',{className:"unit ask",title:"unit not yet assigned"},"?");
     const u=UNIT[unit];
     return el('span',{className:"unit "+u.cls,title:u.label},unit);
   }
-  function Tree({renderRow}){
+  function UnitButtons({onPick}){
+    return el('span',{className:"ask-units"},["$","%","#"].map(u=>el('button',{key:u,type:"button",className:UNIT[u].cls,onClick:()=>onPick(u),"aria-label":UNIT[u].label},u)));
+  }
+
+  // Split a long factor name over two lines for the diagram boxes.
+  function wrapName(name,max){
+    if(name.length<=max)return [name];
+    const words=name.split(" ");let a=[],b=[];
+    for(const w of words){if(!b.length&&(a.join(" ")+" "+w).trim().length<=max)a.push(w);else b.push(w);}
+    if(!a.length)a=[b.shift()];
+    return [a.join(" "),b.join(" ")].filter(Boolean);
+  }
+
+  // The tree as a diagram. `describe(id)` says how each factor should look
+  // and behave; the diagram only draws.
+  function Diagram({width,describe}){
+    const colW=width/LAYOUT.cols;
+    const roomy=colW>=118;
+    const tight=colW<105;
+    const nodeW=Math.min(roomy?164:110,colW-10);
+    const nodeH=roomy?64:46;
+    const gapY=roomy?54:40;
+    const top=8;
+    const height=top+LAYOUT.levels*nodeH+(LAYOUT.levels-1)*gapY+8;
+    const cx=id=>LAYOUT.pos[id].x*colW+colW/2;
+    const cy=id=>top+LAYOUT.pos[id].d*(nodeH+gapY)+nodeH/2;
+    const edges=[];
+    NODE_IDS.forEach(id=>NODES[id].kids.forEach(k=>{
+      const x1=cx(id),y1=cy(id)+nodeH/2,x2=cx(k),y2=cy(k)-nodeH/2,ym=(y1+y2)/2;
+      edges.push(el('path',{key:id+"-"+k,className:"edge",d:"M"+x1+" "+y1+" C"+x1+" "+ym+","+x2+" "+ym+","+x2+" "+y2}));
+    }));
+    return el('svg',{className:"diagram"+(tight?" tight":""),viewBox:"0 0 "+width+" "+height,role:"group","aria-label":"FAIR factor tree"},
+      edges,
+      NODE_IDS.map(id=>{
+        const n=NODES[id],d=describe(id);
+        const x=cx(id)-nodeW/2,y=cy(id)-nodeH/2;
+        const cls="gnode "+d.state+(d.flash?" "+d.flash:"")+(d.selected?" sel":"")+(d.sourced?" sourced":"")+(d.armed?" armed":"")+(d.onClick?" clickable":"");
+        const showName=roomy&&d.state!=="slot";
+        const lines=showName?wrapName(n.name,Math.floor((nodeW-40)/5.3)):[];
+        return el('g',{key:id,className:cls,transform:"translate("+x+","+y+")",
+          onClick:d.onClick||null,role:d.onClick?"button":null,tabIndex:d.onClick?0:-1,
+          "aria-label":d.state==="slot"?"empty slot":n.abbr+", "+n.name,
+          onKeyDown:d.onClick?e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();d.onClick();}}:null},
+          el('rect',{className:"box",width:nodeW,height:nodeH,rx:12}),
+          d.state==="slot"
+            ?el('text',{className:"dots",x:nodeW/2,y:nodeH/2+5,textAnchor:"middle"},"· · ·")
+            :[
+              el('text',{key:"a",className:"abbr",x:12,y:roomy?25:29},n.abbr),
+              ...lines.map((ln,i)=>el('text',{key:"n"+i,className:"nm",x:12,y:41+i*12},ln)),
+              d.sourced&&roomy?el('text',{key:"t",className:"tag",x:nodeW-12,y:nodeH-8,textAnchor:"end"},"SOURCED"):null,
+              d.unit!==undefined?el('g',{key:"u",className:"ubadge "+(d.unit?UNIT[d.unit].cls:"ask"),transform:"translate("+(nodeW-20)+","+(roomy?20:23)+")"},
+                el('circle',{r:10}),el('text',{y:4,textAnchor:"middle"},d.unit||"?")):null
+            ]);
+      }));
+  }
+
+  function Outline({renderRow}){
     function Branch({id}){
       const n=NODES[id];
       return el('li',null,renderRow(id),n.kids.length>0&&el('ul',null,n.kids.map(k=>el(Branch,{key:k,id:k}))));
@@ -261,20 +400,37 @@
   }
 
   // ------------------------------------------------------------------ walk
-  function WalkMode({list,err,sel,setSel,showDefs}){
+  function WalkMode({list,err,sel,setSel,view,width,showDefs}){
     const bm=list.find(b=>b.id===sel)||null;
     const prov=bm&&bm.provenance?Object.keys(bm.provenance):[];
-    return el('div',null,
-      el(Tree,{renderRow:id=>{
-        const n=NODES[id],rng=rangeFor(bm,id);
-        return el('div',{className:"row"+(rng?" sourced":"")},
-          el('span',{className:"abbr"},n.abbr),
-          el('span',{className:"nm"},n.name),
-          n.aka&&el('span',{className:"aka"},"("+n.aka+")"),
-          el(UnitBadge,{unit:n.unit}),
-          rng&&el('span',{className:"src"},"sourced · "+rng),
-          showDefs&&el('span',{className:"def"},n.def));
-      }}),
+    const [pick,setPick]=useState(ROOT);
+    const p=NODES[pick],rng=rangeFor(bm,pick);
+
+    const body=view==="diagram"
+      ?el('div',null,
+          el(Diagram,{width,describe:id=>({state:"walk",unit:NODES[id].unit,sourced:!!rangeFor(bm,id),selected:id===pick,onClick:()=>setPick(id)})}),
+          el('div',{className:"detail","aria-live":"polite"},
+            el('div',{className:"head"},
+              el('span',{className:"abbr"},p.abbr),el('span',{className:"nm"},p.name),
+              p.aka&&el('span',{className:"aka"},"("+p.aka+")"),
+              el(UnitBadge,{unit:p.unit}),
+              el('span',{className:"ulab"},UNIT[p.unit].label)),
+            el('p',null,p.def),
+            rng&&el('div',{className:"src"},"Sourced from the loaded benchmark: "+rng),
+            el('div',{className:"kids"},
+              PARENT[pick]?["Feeds ",el('b',{key:"p"},NODES[PARENT[pick]].abbr)]:"The top of the tree",
+              p.kids.length?[" · built from ",...p.kids.map((k,i)=>[i?" and ":"",el('b',{key:k},NODES[k].abbr)])]:" · a leaf: estimated directly, or supplied by data")))
+      :el(Outline,{renderRow:id=>{
+          const n=NODES[id],r=rangeFor(bm,id);
+          return el('div',{className:"row"+(r?" sourced":"")},
+            el('span',{className:"abbr"},n.abbr),el('span',{className:"nm"},n.name),
+            n.aka&&el('span',{className:"aka"},"("+n.aka+")"),
+            el(UnitBadge,{unit:n.unit}),
+            r&&el('span',{className:"src"},"sourced · "+r),
+            showDefs&&el('span',{className:"def"},n.def));
+        }});
+
+    return el('div',null,body,
       el('div',{className:"example"},
         el('div',{style:{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap",marginBottom:8}},
           el('b',null,"Worked example"),
@@ -288,14 +444,14 @@
             "A loss study reports how often the event happens and what it costs, which is Loss Event Frequency and Loss Magnitude and nothing below them. Nobody measures contact frequency, probability of action, threat capability or resistance strength across a population. The eleven empty factors are not missing data: they are the analysis, and they are why the decomposition is worth knowing cold.",
             prov.length>0&&el('details',{className:"sources"},
               el('summary',null,"Sources behind the two filled factors ("+prov.length+")"),
-              el('ul',null,prov.map(k=>{const p=bm.provenance[k];return el('li',{key:k},k," — ",p.url?el('a',{href:p.url,target:"_blank",rel:"noopener"},p.source_name||"source"):(p.source_name||"unattributed"),p.confidence?" · "+p.confidence+" confidence":null,p.limitations?el('div',null,p.limitations):null);}))))
+              el('ul',null,prov.map(k=>{const pr=bm.provenance[k];return el('li',{key:k},k," — ",pr.url?el('a',{href:pr.url,target:"_blank",rel:"noopener"},pr.source_name||"source"):(pr.source_name||"unattributed"),pr.confidence?" · "+pr.confidence+" confidence":null,pr.limitations?el('div',null,pr.limitations):null);}))))
           :"Pick a scenario and watch how little of the tree it fills. The gap is the lesson."));
   }
 
   // --------------------------------------------------------------- rebuild
-  function RebuildMode({report}){
+  function RebuildMode({report,view,width}){
     const [pool,setPool]=useState(()=>shuffle(NODE_IDS));
-    const [held,setHeld]=useState(null);        // component picked from the pool
+    const [held,setHeld]=useState(null);        // factor picked from the pool
     const [placed,setPlaced]=useState({});      // id -> true
     const [units,setUnits]=useState({});        // id -> unit
     const [asking,setAsking]=useState(null);    // id awaiting a unit
@@ -329,32 +485,35 @@
 
     let status,cls="";
     if(finished){status="Every factor is placed and every unit is right. Rebuild it again until it is boring.";cls="good";}
-    else if(asking){status="Which unit does "+NODES[asking].abbr+" carry? Answer in its row.";cls="hot";}
+    else if(asking){status="Which unit does "+NODES[asking].abbr+" ("+NODES[asking].name+") carry?";cls="hot";}
     else if(held){status="Where does "+NODES[held].abbr+" ("+NODES[held].name+") sit? Tap the slot.";}
     else status="Pick a factor from the pool, then tap the slot where it belongs.";
 
+    const tree=view==="diagram"
+      ?el(Diagram,{width,describe:id=>{
+          if(!placed[id])return {state:"slot",armed:!!held&&!asking,flash:flash[id],onClick:()=>dropOn(id)};
+          return {state:units[id]?"done":"placed",unit:units[id]||"",flash:flash[id]};
+        }})
+      :el(Outline,{renderRow:id=>{
+          const n=NODES[id],fl=flash[id]||"";
+          if(!placed[id]){
+            const armed=!!held&&!asking;
+            return el('div',{className:"row slot"+(armed?" armed":"")+(fl?" "+fl:""),role:"button",tabIndex:armed?0:-1,
+              onClick:()=>dropOn(id),onKeyDown:e=>{if(e.key==="Enter"||e.key===" ")dropOn(id);},"aria-label":"empty slot"},"· · ·");
+          }
+          const done=!!units[id];
+          return el('div',{className:"row "+(done?"done":"placed")+(fl?" "+fl:"")},
+            el('span',{className:"abbr"},n.abbr),el('span',{className:"nm"},n.name),
+            done?el(UnitBadge,{unit:units[id]}):el(UnitBadge,{ask:true}),
+            asking===id&&el('span',{className:"ask-units"},el('span',null,"unit?"),el(UnitButtons,{onPick:answerUnit})));
+        }});
+
     return el('div',null,
-      el('div',{className:"status "+cls},status),
+      el('div',{className:"status "+cls},el('span',null,status),asking&&view==="diagram"&&el(UnitButtons,{onPick:answerUnit})),
       !finished&&el('div',{className:"pool","aria-label":"Factors still to place"},
         pool.length?pool.map(id=>el('button',{key:id,type:"button",className:"chip"+(held===id?" on":""),disabled:!!asking,onClick:()=>setHeld(h=>h===id?null:id)},NODES[id].abbr,el('small',null,NODES[id].name)))
         :el('span',{className:"empty"},"All placed. Finish the units.")),
-      el(Tree,{renderRow:id=>{
-        const n=NODES[id],fl=flash[id]||"";
-        if(!placed[id]){
-          const armed=!!held&&!asking;
-          return el('div',{className:"row slot"+(armed?" armed":"")+(fl?" "+fl:""),role:"button",tabIndex:armed?0:-1,
-            onClick:()=>dropOn(id),onKeyDown:e=>{if(e.key==="Enter"||e.key===" ")dropOn(id);},
-            "aria-label":"empty slot"},"· · ·");
-        }
-        const done=!!units[id];
-        return el('div',{className:"row "+(done?"done":"placed")+(fl?" "+fl:"")},
-          el('span',{className:"abbr"},n.abbr),
-          el('span',{className:"nm"},n.name),
-          done?el(UnitBadge,{unit:units[id]}):el(UnitBadge,{ask:true}),
-          asking===id&&el('span',{className:"ask-units"},
-            el('span',null,"unit?"),
-            ["$","%","#"].map(u=>el('button',{key:u,type:"button",className:UNIT[u].cls,onClick:()=>answerUnit(u),"aria-label":UNIT[u].label},u))));
-      }}),
+      tree,
       finished&&el('div',{className:"finish"},
         el('div',null,el('b',null,"Tree rebuilt"),el('span',null,"Placement "+pctOf(tries.placeOk,tries.place)+" first-time right · units "+pctOf(tries.unitOk,tries.unit)))));
   }
@@ -418,7 +577,7 @@
 
   // ------------------------------------------------------------------- app
   const MODES=[
-    {id:"walk",title:"Walk the tree",blurb:"Every factor with its name, its unit and its definition. Load a benchmark to see which two get a published number."},
+    {id:"walk",title:"Walk the tree",blurb:"Every factor with its name and unit. Tap one for its definition, or switch to the outline to read them all. Load a benchmark to see which two get a published number."},
     {id:"rebuild",title:"Rebuild it",blurb:"The tree comes back empty. Place all thirteen factors from a shuffled pool, then give each its unit."},
     {id:"match",title:"Match definitions",blurb:"Twenty-two definitions, twenty-two names: the factors, the six forms of loss and the three sub-factors of Probability of Action."},
   ];
@@ -426,11 +585,19 @@
   function App(){
     const [mode,setMode]=useState("walk");
     const [round,setRound]=useState(0);      // bumps the key so a drill restarts fresh
+    const [viewPref,setViewPref]=useState("diagram");
     const [showDefs,setShowDefs]=useState(true);
     const [list,setList]=useState([]);
     const [err,setErr]=useState(null);
     const [sel,setSel]=useState("");
     const [prog,setProg]=useState({});
+    const panelRef=useRef(null);
+    const panelW=useWidth(panelRef,900);
+    // Seven leaf columns need room; below that the outline takes over.
+    const diagramFits=panelW>=560;
+    const view=diagramFits?viewPref:"outline";
+    const drawW=Math.max(300,panelW-36);
+
     useEffect(()=>{
       let live=true;
       fetch(BENCHMARKS_URL).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
@@ -445,7 +612,7 @@
     else if(mode==="rebuild")progress=[[(prog.placedN||0)+"/13","placed · "+(prog.tries?pctOf(prog.tries.placeOk,prog.tries.place):"—")+" right"],[(prog.unitsN||0)+"/13","units · "+(prog.tries?pctOf(prog.tries.unitOk,prog.tries.unit):"—")+" right"]];
     else progress=[[(prog.matchedN||0)+"/22","matched"],[prog.tries?pctOf(prog.tries.ok,prog.tries.n):"—","first-try accuracy"]];
 
-    const panelTitle=MODES.find(m=>m.id===mode).title;
+    const current=MODES.find(m=>m.id===mode);
 
     return el('div',null,
       !EMBEDDED&&el('header',{className:"wrap masthead"},
@@ -456,6 +623,13 @@
         el('aside',{className:"card controls","aria-label":"Drill controls"},
           el('div',{className:"label"},"Mode"),
           el('div',{className:"modes",role:"tablist"},MODES.map(m=>el('button',{key:m.id,type:"button",role:"tab","aria-selected":mode===m.id,className:mode===m.id?"on":"",onClick:()=>choose(m.id)},el('b',null,m.title),el('span',null,m.blurb)))),
+          mode!=="match"&&el('div',null,
+            el('div',{className:"rule"}),
+            el('div',{style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,flexWrap:"wrap"}},
+              el('span',{className:"label"},"View"),
+              el('div',{className:"seg",role:"tablist","aria-label":"Tree view"},
+                el('button',{type:"button",className:view==="diagram"?"on":"",disabled:!diagramFits,onClick:()=>setViewPref("diagram"),title:diagramFits?null:"Needs a wider screen"},"Diagram"),
+                el('button',{type:"button",className:view==="outline"?"on":"",onClick:()=>setViewPref("outline")},"Outline")))),
           el('div',{className:"rule"}),
           el('div',{className:"label",style:{marginBottom:8}},mode==="walk"?"On the board":"Progress"),
           el('div',{className:"progress"},progress.map((p,i)=>el('div',{key:i,className:"cell"},el('div',{className:"v"},p[0]),el('div',{className:"k"},p[1])))),
@@ -467,15 +641,17 @@
             el('div',null,el(UnitBadge,{unit:"#"}),"frequency: a count per period")),
           el('div',{className:"rule"}),
           el('div',{style:{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",justifyContent:"space-between"}},
-            mode==="walk"
+            mode==="walk"&&view==="outline"
               ?el('button',{type:"button",className:"btn ghost small",onClick:()=>setShowDefs(s=>!s)},showDefs?"Hide definitions":"Show definitions")
-              :el('button',{type:"button",className:"btn ghost small",onClick:()=>choose(mode)},"Start over"))),
+              :mode==="walk"
+                ?el('span',{style:{fontSize:12,color:"var(--muted)"}},"Tap a factor in the diagram to read its definition.")
+                :el('button',{type:"button",className:"btn ghost small",onClick:()=>choose(mode)},"Start over"))),
         el('section',{"aria-label":"Drill"},
-          el('div',{className:"card panel"},
-            el('div',{className:"panel-head"},el('h2',null,panelTitle)),
-            el('p',{className:"lede"},MODES.find(m=>m.id===mode).blurb),
-            mode==="walk"&&el(WalkMode,{list,err,sel,setSel,showDefs}),
-            mode==="rebuild"&&el(RebuildMode,{key:"r"+round,report:setProg}),
+          el('div',{className:"card panel",ref:panelRef},
+            el('div',{className:"panel-head"},el('h2',null,current.title)),
+            el('p',{className:"lede"},current.blurb),
+            mode==="walk"&&el(WalkMode,{list,err,sel,setSel,view,width:drawW,showDefs}),
+            mode==="rebuild"&&el(RebuildMode,{key:"r"+round,report:setProg,view,width:drawW}),
             mode==="match"&&el(MatchMode,{key:"m"+round,report:setProg})))),
       el(Notes));
   }
